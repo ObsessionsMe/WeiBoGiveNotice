@@ -29,7 +29,7 @@ namespace WeiBoGiveNotice
             {
                 //注册微博用户客户端
                 weBoUserClient = new WeBoUserClient();
-                weBoUserClient.qrCodeImageChange=new WeBoUserClient.QrCodeLoginImageChange(QrCodeLoginImageChange);
+                weBoUserClient.QrCodeImageChange=new WeBoUserClient.QrCodeLoginImageChange(QrCodeLoginImageChange);
 
                 //显示图片
                 //Image img = Image.FromFile(@"E:\PerTerProject\WeiBoGiveNotice\WeiBoGiveNotice\timg.jpg");
