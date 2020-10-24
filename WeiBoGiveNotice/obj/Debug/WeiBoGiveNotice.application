@@ -7,14 +7,14 @@
     <framework targetVersion="4.5" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="WeiBoGiveNotice.exe.manifest" size="3852">
+    <dependentAssembly dependencyType="install" codebase="WeiBoGiveNotice.exe.manifest" size="4536">
       <assemblyIdentity name="WeiBoGiveNotice.exe" version="1.0.0.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>JTzGltGXpv9loAtBhGffRYWFgFS+npd4ArmaMZrNYKY=</dsig:DigestValue>
+        <dsig:DigestValue>FSkgYGzWQTxXaQ/K4hoiDb62hS/NR6OxWnGkXrL8l/A=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
