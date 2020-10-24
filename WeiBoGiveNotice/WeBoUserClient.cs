@@ -117,6 +117,13 @@ namespace WeiBoGiveNotice
         private const string HomePage = "https://weibo.com/";
 
 
+        private Dictionary<string, string> Cookies = new Dictionary<string, string>();
+
+        /// <summary>
+        /// 是否初始化中
+        /// </summary>
+        private bool IsInit = true;
+
         #endregion
 
 
@@ -143,8 +150,31 @@ namespace WeiBoGiveNotice
 
         private void SetCookie(string cookieStr)
         {
-
-            //HttpItem.Cookie+= 
+            cookieStr += ";";
+            cookieStr = Regex.Replace(cookieStr, "(path=.*?,)|(expires=.*?;)|(path=.*?;)|(domain=.*?;)|(Max-Age=.*?;)", "").Trim();
+            var filterKeys = new List<string>() { "path", "domain", "SameSite", "httponly", "expires" };
+            var cookies = cookieStr.Split(';');
+            foreach (string cookie in cookies)
+            {
+                if (cookie.Contains("="))
+                {
+                    var ck_keyVal = cookie.Split('=');
+                    var key = ck_keyVal[0].Trim();
+                    var value = cookie.Substring(cookie.IndexOf(key) + key.Length + 1).Trim();
+                    if (!filterKeys.Contains(key))
+                    {
+                        if (Cookies.Keys.Contains(key))
+                        {
+                            Cookies.Remove(key);
+                        }
+                        if (value != "deleted")
+                        {
+                            Cookies.Add(key, value);
+                        }
+                    }
+                }
+            }
+            HttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
         }
 
 
@@ -170,13 +200,34 @@ namespace WeiBoGiveNotice
         /// 粉丝查询
         /// </summary>
         /// <param name="pageNum">页号</param>
-        public void SearchFans(int pageNum)
+        public List<Fans> SearchFans(int pageNum)
         {
+            var Res = new List<Fans>();
             //粉丝查询
             HttpItem.Method = "GET";
-            HttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, TimeStamp);
+            HttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, pageNum);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(HttpItem);
 
+            var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
+
+            //解析粉丝列表
+            Fans fans = null;
+            LatestFans = new List<Fans>();
+            foreach (Match match in fansList)
+            {
+                fans = new Fans();
+                fans.uid = match.Groups[1].Value;
+                fans.nick = match.Groups[2].Value;
+                fans.image = match.Groups[3].Value;
+                Res.Add(fans);
+            }
+
+            if (pageNum == 1 && IsInit)
+            {
+                SetWeiBoUser(SearchFansPageHttpResult.Html);
+                LatestFans = Res;
+            }
+            return Res;
         }
 
         /// <summary>
@@ -184,7 +235,7 @@ namespace WeiBoGiveNotice
         /// </summary>
         /// <param name="message">发送的消息内容</param>
         /// <param name="maxUserCount">最大用户数量</param>
-        public void ListenNewFans(string message,int maxUserCount)
+        public void ListenNewFans(string message, int maxUserCount)
         {
             //循环
             //判断是否继续发送
@@ -213,11 +264,18 @@ namespace WeiBoGiveNotice
         {
 
         }
-        
+
 
         private void SetWeiBoUser(string HttpContent)
         {
-
+            string values = string.Empty;
+            var Matches = Regex.Matches(HttpContent, "\\['.*?'\\]='.*?';");
+            foreach (Match Match in Matches)
+            {
+                values += Match.Value;
+            }
+            string jsonString = "{" + values.Replace("'", "\"").Replace("[", "").Replace("]=", ":").Replace(";", ",").TrimEnd(',') + "}";
+            WeiBoUser = Newtonsoft.Json.JsonConvert.DeserializeObject<WeiBoUser>(jsonString);
         }
 
         private bool QrcodeImageSuccess { get; set; }
@@ -255,9 +313,6 @@ namespace WeiBoGiveNotice
                             var QrCodeCheckApiRes = QrCodeCheckApiHttpResult.Html.ToWeiBoJsonResult<QrImage>();
                             if (QrCodeCheckApiRes.retcode == 20000000)
                             {
-                                //扫码成功
-                                QrcodeImageSuccess = true;
-
                                 //登陆用户认证中心
                                 HttpItem.URL = string.Format(SSOLoginApi, QrCodeCheckApiRes.data.alt, TimeStamp);
                                 var SSOLoginApiHttpResult = HttpHelper.GetHtml(HttpItem);
@@ -266,13 +321,27 @@ namespace WeiBoGiveNotice
                                 var SSOLoginApiRes = SSOLoginApiHttpResult.Html.ToWeiBoJsonResult<string>();
                                 if (SSOLoginApiRes.retcode == 0)
                                 {
+                                    foreach (string crossDomainUrl in SSOLoginApiRes.crossDomainUrlList)
+                                    {
+                                        //设置核心cookie
+                                        HttpItem.URL = crossDomainUrl;
+                                        var crossDomainUrl_HttpResult = HttpHelper.GetHtml(HttpItem);
+                                        SetCookie(crossDomainUrl_HttpResult.Cookie);
+                                    }
+
                                     //登陆成功
                                     WeiBoUser = new WeiBoUser();
                                     WeiBoUser.uid = SSOLoginApiRes.uid;
                                     //初始化粉丝列表
                                     SearchFans(1);
-                                }
+                                    //设置二维码图片区显示用户头像
+                                    QrCodeImageChange(WeiBoUser.avatar_large);
 
+                                    //扫码登陆成功
+                                    QrcodeImageSuccess = true;
+                                    //初始化结束
+                                    IsInit = false;
+                                }
                                 break;
                             }
                             Thread.Sleep(1000);
@@ -438,7 +507,11 @@ namespace WeiBoGiveNotice
     /// </summary>
     public class Fans
     {
+        public string uid { get; set; }
 
+        public string nick { get; set; }
+
+        public string image { get; set; }
     }
 
     public class QrImage
