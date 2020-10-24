@@ -89,7 +89,8 @@ namespace WeiBoGiveNotice
         /// </summary>
         private HttpHelper HttpHelper { get; set; }
 
-        private HttpItem HttpItem = new HttpItem();
+        private HttpItem GetHttpItem = new HttpItem();
+
 
         /// <summary>
         /// 二维码信息获取接口
@@ -143,9 +144,9 @@ namespace WeiBoGiveNotice
 
         private void loadCookie()
         {
-            HttpItem.Method = "GET";
-            HttpItem.URL = HomePage;
-            var HomePageHttpResult = HttpHelper.GetHtml(HttpItem);
+            GetHttpItem.Method = "GET";
+            GetHttpItem.URL = HomePage;
+            var HomePageHttpResult = HttpHelper.GetHtml(GetHttpItem);
         }
 
         private void SetCookie(string cookieStr)
@@ -174,7 +175,7 @@ namespace WeiBoGiveNotice
                     }
                 }
             }
-            HttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
+            GetHttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
         }
 
 
@@ -204,9 +205,9 @@ namespace WeiBoGiveNotice
         {
             var Res = new List<Fans>();
             //粉丝查询
-            HttpItem.Method = "GET";
-            HttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, pageNum);
-            var SearchFansPageHttpResult = HttpHelper.GetHtml(HttpItem);
+            GetHttpItem.Method = "GET";
+            GetHttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, pageNum);
+            var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
 
             var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
 
@@ -283,14 +284,14 @@ namespace WeiBoGiveNotice
         private void QrcodeImageThread()
         {
             QrcodeImageSuccess = false;
-            HttpItem.Method = "GET";
+            GetHttpItem.Method = "GET";
             while (!QrcodeImageSuccess)
             {
                 try
                 {
                     //获取二维码
-                    HttpItem.URL = string.Format(QrCodeImageApi, TimeStamp);
-                    var QrCodeImageApiHttpResult = HttpHelper.GetHtml(HttpItem);
+                    GetHttpItem.URL = string.Format(QrCodeImageApi, TimeStamp);
+                    var QrCodeImageApiHttpResult = HttpHelper.GetHtml(GetHttpItem);
                     if (QrCodeImageApiHttpResult.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         var qrCodeApiRes = QrCodeImageApiHttpResult.Html.ToWeiBoJsonResult<QrImage>();
@@ -308,14 +309,14 @@ namespace WeiBoGiveNotice
                         while ((DateTime.Now - startTime).Seconds < 50)
                         {
                             //检测扫码成功获取数据
-                            HttpItem.URL = string.Format(QrCodeCheckApi, qrCodeApiRes.data.qrid, TimeStamp);
-                            var QrCodeCheckApiHttpResult = HttpHelper.GetHtml(HttpItem);
+                            GetHttpItem.URL = string.Format(QrCodeCheckApi, qrCodeApiRes.data.qrid, TimeStamp);
+                            var QrCodeCheckApiHttpResult = HttpHelper.GetHtml(GetHttpItem);
                             var QrCodeCheckApiRes = QrCodeCheckApiHttpResult.Html.ToWeiBoJsonResult<QrImage>();
                             if (QrCodeCheckApiRes.retcode == 20000000)
                             {
                                 //登陆用户认证中心
-                                HttpItem.URL = string.Format(SSOLoginApi, QrCodeCheckApiRes.data.alt, TimeStamp);
-                                var SSOLoginApiHttpResult = HttpHelper.GetHtml(HttpItem);
+                                GetHttpItem.URL = string.Format(SSOLoginApi, QrCodeCheckApiRes.data.alt, TimeStamp);
+                                var SSOLoginApiHttpResult = HttpHelper.GetHtml(GetHttpItem);
                                 //保存用户cookie
                                 SetCookie(SSOLoginApiHttpResult.Cookie);
                                 var SSOLoginApiRes = SSOLoginApiHttpResult.Html.ToWeiBoJsonResult<string>();
@@ -324,8 +325,8 @@ namespace WeiBoGiveNotice
                                     foreach (string crossDomainUrl in SSOLoginApiRes.crossDomainUrlList)
                                     {
                                         //设置核心cookie
-                                        HttpItem.URL = crossDomainUrl;
-                                        var crossDomainUrl_HttpResult = HttpHelper.GetHtml(HttpItem);
+                                        GetHttpItem.URL = crossDomainUrl;
+                                        var crossDomainUrl_HttpResult = HttpHelper.GetHtml(GetHttpItem);
                                         SetCookie(crossDomainUrl_HttpResult.Cookie);
                                     }
 
