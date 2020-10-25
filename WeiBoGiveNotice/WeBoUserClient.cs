@@ -91,6 +91,7 @@ namespace WeiBoGiveNotice
 
         private HttpItem GetHttpItem = new HttpItem();
 
+        private HttpItem PostHttpItem = new HttpItem();
 
         /// <summary>
         /// 二维码信息获取接口
@@ -117,6 +118,10 @@ namespace WeiBoGiveNotice
         /// </summary>
         private const string HomePage = "https://weibo.com/";
 
+        /// <summary>
+        ///  发消息api
+        /// </summary>
+        private const string SendMessageApi = "https://api.weibo.com/webim/2/direct_messages/new.json";
 
         private Dictionary<string, string> Cookies = new Dictionary<string, string>();
 
@@ -176,6 +181,7 @@ namespace WeiBoGiveNotice
                 }
             }
             GetHttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
+            PostHttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
         }
 
 
@@ -261,9 +267,20 @@ namespace WeiBoGiveNotice
             }
         }
 
-        private void SendMessage(string uid, string message)
+        public void SendMessage(string uid, string message)
         {
-
+            PostHttpItem.Method = "post";
+            PostHttpItem.URL = SendMessageApi;
+            PostHttpItem.ContentType = "application/x-www-form-urlencoded";
+            PostHttpItem.Header.Add("Origin", "https://api.weibo.com");
+            PostHttpItem.Referer = "https://api.weibo.com/chat/ ";
+            PostHttpItem.Postdata = "text=hello&uid=6823169570&extensions={\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}&is_encoded=0&decodetime=1&source=209678993";
+            HttpResult result = HttpHelper.GetHtml(PostHttpItem);
+            var code = result.Html.ToWeiBoJsonResult<object>();
+            if (code.error_code > 0)
+            {
+                PrintMsg(PrintType.error, "方法:SendMessage 出错" + code.error);
+            }
         }
 
 
@@ -364,7 +381,6 @@ namespace WeiBoGiveNotice
         info = 0,
         error = 1
     }
-
 
     public class WeiBoUser
     {
@@ -501,6 +517,10 @@ namespace WeiBoGiveNotice
         /// 
         /// </summary>
         public List<string> crossDomainUrlList { get; set; }
+
+        public string error { get; set; }
+        public string request { get; set; }
+        public int error_code { get; set; }
     }
 
     /// <summary>

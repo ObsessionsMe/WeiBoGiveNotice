@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WeiBoGiveNotice.exe" size="47504">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WeiBoGiveNotice.exe" size="54672">
       <assemblyIdentity name="WeiBoGiveNotice" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>qeD5NSGTheCeP9TMC+8AAlbKjoOCvvY0rQjgTi+RII4=</dsig:DigestValue>
+        <dsig:DigestValue>E56L64v9Q70CkyfjA8haCEl6cvkJJDyFYuRbBcjYD/0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -74,13 +74,13 @@
       <dsig:DigestValue>ETy41uMXctWsowIBMTGTcqzrHTc0CYiAIIEuuIjdUms=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="WeiBoGiveNotice.exe.config" size="456">
+  <file name="WeiBoGiveNotice.exe.config" size="589">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>cien0Cib+YY98QGJDPWny1RGcn6SCERrTqtEBLcQIwY=</dsig:DigestValue>
+      <dsig:DigestValue>T8fgV3TiJyYZjg43j0EszvuO4+GDOc2tEJGakiehWAg=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

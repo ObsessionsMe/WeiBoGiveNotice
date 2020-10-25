@@ -60,7 +60,7 @@ namespace WeiBoGiveNotice
         private void setConfig_Click(object sender, EventArgs e)
         {
             //弹框显示
-            ConfigFrom cf = new ConfigFrom();
+            ConfigFrom cf = new ConfigFrom(weBoUserClient);
             cf.ShowDialog();
             //可以执行此处文件
         }
@@ -68,7 +68,8 @@ namespace WeiBoGiveNotice
         //点击开始(下方按钮)
         private void BeginDown_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("下面的开始按钮");
+            //MessageBox.Show("下面的开始按钮");
+            weBoUserClient.SendMessage("1", "hello");
         }
     }
 }

@@ -28,19 +28,401 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.FansRefreshTime_End = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.FansRefreshTime_Begin = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBox12 = new System.Windows.Forms.TextBox();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.saveConfig = new System.Windows.Forms.Button();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.textBox8);
+            this.groupBox1.Controls.Add(this.textBox7);
+            this.groupBox1.Controls.Add(this.textBox6);
+            this.groupBox1.Controls.Add(this.textBox5);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.FansRefreshTime_End);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.FansRefreshTime_Begin);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Location = new System.Drawing.Point(28, 28);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(344, 160);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "刷新粉丝列表时间";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(178, 124);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(49, 14);
+            this.label12.TabIndex = 14;
+            this.label12.Text = "秒——";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(178, 86);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(49, 14);
+            this.label11.TabIndex = 13;
+            this.label11.Text = "秒——";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(299, 124);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(21, 14);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "秒";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(299, 86);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(21, 14);
+            this.label9.TabIndex = 11;
+            this.label9.Text = "秒";
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(233, 120);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(58, 23);
+            this.textBox8.TabIndex = 10;
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(233, 79);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(58, 23);
+            this.textBox7.TabIndex = 9;
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(104, 120);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(67, 23);
+            this.textBox6.TabIndex = 8;
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(104, 82);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(67, 23);
+            this.textBox5.TabIndex = 7;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 130);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(91, 14);
+            this.label8.TabIndex = 6;
+            this.label8.Text = "随机中断时间";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(7, 86);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(91, 14);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "随机间隔时间";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(299, 40);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(21, 14);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "秒";
+            // 
+            // FansRefreshTime_End
+            // 
+            this.FansRefreshTime_End.Location = new System.Drawing.Point(233, 37);
+            this.FansRefreshTime_End.Name = "FansRefreshTime_End";
+            this.FansRefreshTime_End.Size = new System.Drawing.Size(58, 23);
+            this.FansRefreshTime_End.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(178, 40);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 14);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "秒——";
+            // 
+            // FansRefreshTime_Begin
+            // 
+            this.FansRefreshTime_Begin.Location = new System.Drawing.Point(104, 37);
+            this.FansRefreshTime_Begin.Name = "FansRefreshTime_Begin";
+            this.FansRefreshTime_Begin.Size = new System.Drawing.Size(67, 23);
+            this.FansRefreshTime_Begin.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 14);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "随机刷新时间";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label18);
+            this.groupBox2.Controls.Add(this.label17);
+            this.groupBox2.Controls.Add(this.textBox12);
+            this.groupBox2.Controls.Add(this.textBox11);
+            this.groupBox2.Controls.Add(this.label16);
+            this.groupBox2.Controls.Add(this.label15);
+            this.groupBox2.Controls.Add(this.textBox10);
+            this.groupBox2.Controls.Add(this.textBox9);
+            this.groupBox2.Controls.Add(this.label14);
+            this.groupBox2.Controls.Add(this.label13);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.textBox3);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.textBox4);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Location = new System.Drawing.Point(379, 28);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(328, 160);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "打招呼时间";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(301, 117);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(21, 14);
+            this.label18.TabIndex = 14;
+            this.label18.Text = "秒";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(301, 82);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(21, 14);
+            this.label17.TabIndex = 13;
+            this.label17.Text = "秒";
+            // 
+            // textBox12
+            // 
+            this.textBox12.Location = new System.Drawing.Point(233, 115);
+            this.textBox12.Name = "textBox12";
+            this.textBox12.Size = new System.Drawing.Size(58, 23);
+            this.textBox12.TabIndex = 12;
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(233, 79);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(58, 23);
+            this.textBox11.TabIndex = 11;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(178, 120);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(49, 14);
+            this.label16.TabIndex = 10;
+            this.label16.Text = "秒——";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(178, 82);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(49, 14);
+            this.label15.TabIndex = 9;
+            this.label15.Text = "秒——";
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(104, 76);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(67, 23);
+            this.textBox10.TabIndex = 8;
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(104, 111);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(67, 23);
+            this.textBox9.TabIndex = 7;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(7, 120);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(91, 14);
+            this.label14.TabIndex = 6;
+            this.label14.Text = "随机中断时间";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(7, 79);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(91, 14);
+            this.label13.TabIndex = 5;
+            this.label13.Text = "随机间隔时间";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(301, 40);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(21, 14);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "秒";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(233, 37);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(58, 23);
+            this.textBox3.TabIndex = 3;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(178, 40);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(49, 14);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "秒——";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(104, 37);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(67, 23);
+            this.textBox4.TabIndex = 1;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(7, 40);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(91, 14);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "随机刷新时间";
+            // 
+            // saveConfig
+            // 
+            this.saveConfig.Location = new System.Drawing.Point(320, 194);
+            this.saveConfig.Name = "saveConfig";
+            this.saveConfig.Size = new System.Drawing.Size(112, 34);
+            this.saveConfig.TabIndex = 6;
+            this.saveConfig.Text = "保存";
+            this.saveConfig.UseVisualStyleBackColor = true;
+            this.saveConfig.Click += new System.EventHandler(this.saveConfig_Click);
             // 
             // ConfigFrom
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(451, 336);
+            this.ClientSize = new System.Drawing.Size(731, 242);
+            this.Controls.Add(this.saveConfig);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
+            this.Font = new System.Drawing.Font("黑体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "ConfigFrom";
             this.Text = "系统配置";
+            this.Load += new System.EventHandler(this.ConfigFrom_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox FansRefreshTime_End;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox FansRefreshTime_Begin;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox textBox12;
+        private System.Windows.Forms.TextBox textBox11;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button saveConfig;
     }
 }
