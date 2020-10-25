@@ -44,7 +44,7 @@
             this.CallCount = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.CallOldFansNum = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -59,7 +59,7 @@
             this.label36 = new System.Windows.Forms.Label();
             this.officical = new System.Windows.Forms.TextBox();
             this.setConfig = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.CallNewFansNum = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
             this.label33 = new System.Windows.Forms.Label();
@@ -200,7 +200,7 @@
             this.groupBox2.Controls.Add(this.CallCount);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Controls.Add(this.CallOldFansNum);
             this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.button1);
@@ -260,12 +260,12 @@
             this.label3.TabIndex = 10;
             this.label3.Text = "再向前打招呼";
             // 
-            // textBox1
+            // CallOldFansNum
             // 
-            this.textBox1.Location = new System.Drawing.Point(131, 92);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(90, 23);
-            this.textBox1.TabIndex = 9;
+            this.CallOldFansNum.Location = new System.Drawing.Point(131, 92);
+            this.CallOldFansNum.Name = "CallOldFansNum";
+            this.CallOldFansNum.Size = new System.Drawing.Size(90, 23);
+            this.CallOldFansNum.TabIndex = 9;
             // 
             // label10
             // 
@@ -348,7 +348,7 @@
             this.groupBox3.Controls.Add(this.label36);
             this.groupBox3.Controls.Add(this.officical);
             this.groupBox3.Controls.Add(this.setConfig);
-            this.groupBox3.Controls.Add(this.textBox2);
+            this.groupBox3.Controls.Add(this.CallNewFansNum);
             this.groupBox3.Controls.Add(this.label35);
             this.groupBox3.Controls.Add(this.label34);
             this.groupBox3.Controls.Add(this.label33);
@@ -413,13 +413,13 @@
             this.setConfig.UseVisualStyleBackColor = true;
             this.setConfig.Click += new System.EventHandler(this.setConfig_Click);
             // 
-            // textBox2
+            // CallNewFansNum
             // 
-            this.textBox2.Location = new System.Drawing.Point(408, 43);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(90, 23);
-            this.textBox2.TabIndex = 14;
-            this.textBox2.Text = "9999";
+            this.CallNewFansNum.Location = new System.Drawing.Point(408, 43);
+            this.CallNewFansNum.Name = "CallNewFansNum";
+            this.CallNewFansNum.Size = new System.Drawing.Size(90, 23);
+            this.CallNewFansNum.TabIndex = 14;
+            this.CallNewFansNum.Text = "9999";
             // 
             // label35
             // 
@@ -601,7 +601,7 @@
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "主页";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -641,7 +641,7 @@
         private System.Windows.Forms.Label CallCount;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox CallOldFansNum;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label19;
@@ -659,7 +659,7 @@
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.TextBox officical;
         private System.Windows.Forms.Button setConfig;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox CallNewFansNum;
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.Label label33;

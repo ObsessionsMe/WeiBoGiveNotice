@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -50,26 +51,58 @@ namespace WeiBoGiveNotice
         }
 
 
-        //点击开始(向前打招呼)
+        //点击开始(向前打招呼)--给老粉丝发消息
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("上面的开始按钮");
-        }
+            if (string.IsNullOrEmpty(officical.Text))
+            {
+                MessageBox.Show("文案不能为空");
+                return;
+            }
+            if (string.IsNullOrEmpty(CallOldFansNum.Text))
+            {
+                MessageBox.Show("向前打招呼数量不能为空");
+                return;
+            }
+            int CallOldFansNums = int.Parse(CallOldFansNum.Text);
+            if (CallOldFansNums <= 0)
+            {
+                MessageBox.Show("向前打招呼数量必须大于0");
+                return;
+            }
+            weBoUserClient.IsSendMeesageToOldFansRun = true;
+            weBoUserClient.SendMeesageToOldFans(officical.Text, CallOldFansNums);
+            //this.Enabled = true;
+         }
 
         //点击系统配置
         private void setConfig_Click(object sender, EventArgs e)
         {
-            //弹框显示
             ConfigFrom cf = new ConfigFrom(weBoUserClient);
             cf.ShowDialog();
-            //可以执行此处文件
+            //可以执行此处代码
         }
 
-        //点击开始(下方按钮)
+        //点击开始(下方按钮)--给新粉丝发消息
         private void BeginDown_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("下面的开始按钮");
-            weBoUserClient.SendMessage("1", "hello");
+            if (string.IsNullOrEmpty(officical.Text))
+            {
+                MessageBox.Show("文案不能为空");
+                return;
+            }
+            if (string.IsNullOrEmpty(CallNewFansNum.Text))
+            {
+                MessageBox.Show("向前打招呼数量不能为空");
+                return;
+            }
+            int CallNewFansNums = int.Parse(CallNewFansNum.Text);
+            if (CallNewFansNums <= 0)
+            {
+                MessageBox.Show("向前打招呼数量必须大于0");
+                return;
+            }
+            weBoUserClient.ListenNewFans(officical.Text, CallNewFansNums);
         }
     }
 }

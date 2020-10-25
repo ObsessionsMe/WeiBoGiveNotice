@@ -43,7 +43,7 @@ namespace WeiBoGiveNotice
         public WeiBoUser WeiBoUser { get; set; }
 
         /// <summary>
-        /// 最新粉丝列表
+        /// 最新粉丝
         /// </summary>
         public List<Fans> LatestFans { get; set; }
 
@@ -74,10 +74,16 @@ namespace WeiBoGiveNotice
         /// </summary>
         public bool IsSendMessageNewFansRun = false;
 
-        /// <summary>
-        /// 粉丝总页数
-        /// </summary>
-        public int FansPageCount { get; set; }
+        //系统配置信息
+        public int NewFansRefresh_Begin { get; set; }
+        public int NewFansRefresh_End { get; set; }
+        public int NewFansCall_Begin { get; set; }
+        public int NewFansCall_End { get; set; }
+
+        public int OldRefresh_Begin { get; set; }
+        public int OldRefresh_End { get; set; }
+        public int OldFansCall_Begin { get; set; }
+        public int OldFansCall_End { get; set; }
         #endregion
         #region 私有属性
         /// <summary>
@@ -120,6 +126,8 @@ namespace WeiBoGiveNotice
         /// </summary>
         private const string SearchFansPage = "https://weibo.com/{0}/fans?Pl_Official_RelationFans__88_page={1}";
 
+        private const string isExistFansPage = "https://weibo.com/{1}/fans?search={0}";
+
 
         /// <summary>
         ///  发消息api
@@ -130,7 +138,6 @@ namespace WeiBoGiveNotice
 
 
         #endregion
-
 
 
         private void PrintMsg(PrintType printType, string message, Exception exception = null)
@@ -270,12 +277,90 @@ namespace WeiBoGiveNotice
         /// <param name="maxUserCount">最大用户数量</param>
         public void ListenNewFans(string message, int maxUserCount)
         {
-            //循环
-            //判断是否继续发送
-            if (IsSendMessageNewFansRun)
-            {
+            Thread thread = new Thread(() => SendMeesageToNewFans(message, maxUserCount));
+            thread.Start();
+        }
 
+        private void SendMeesageToNewFans(string message, int maxUserCount)
+        {
+            try
+            {
+                IsSendMessageNewFansRun = true;
+                var sentFans = new List<Fans>();
+                int sentFansNum = 0;
+                //判断是否继续发送
+                while (IsSendMessageNewFansRun)
+                {
+                    //1从第一页的粉丝列表开始找哪些是新粉丝,依次类推
+                    if (LatestFans == null)
+                    {
+                        return;
+                    }
+                    int pageNum = 0;
+                    var fansList = new List<Fans>();
+                    bool isExistlastFans = true;
+                    bool bo = true;
+                    sentFans = new List<Fans>();
+                    while (isExistlastFans)
+                    {
+                        pageNum++;
+                        fansList = SearchFans(pageNum);
+                        if (fansList.Count == 0)
+                        {
+                            return;
+                        }
+                        //找第一页的粉丝
+                        while (!isExistFans(LatestFans[0].nick) && pageNum == 1)
+                        {
+                            LatestFans.RemoveAt(0);
+                            if (fansList.Count == 0)
+                            {
+                                LatestFans = fansList;
+                                bo = false;
+                                break;
+                            }
+                        }
+                        if (bo)
+                        {
+                            //发消息
+                            for (int i = 0; i < fansList.Count; i++)
+                            {
+                                if (fansList[i].uid == LatestFans[0].uid)
+                                {
+                                    break;
+                                }
+                                SendMessage(fansList[i].uid, message);
+                                sentFansNum++;
+                                if (maxUserCount == sentFansNum)
+                                {
+                                    //达到打招呼上线后，退出循环
+                                    IsSendMessageNewFansRun = false;
+                                }
+                                Thread.Sleep(5000);
+                            }
+                            //2如果找到上次最后一个粉丝就停止循环
+                            isExistlastFans = fansList.SingleOrDefault(x => x.uid == LatestFans[0].uid) != null ? false : true;
+                        }
+                        sentFans.AddRange(fansList);
+                        Thread.Sleep(5000);
+                    }
+                    LatestFans = sentFans;
+                }
             }
+            catch (Exception ex)
+            {
+                PrintMsg(PrintType.info, "方法:ListenNewFans: 正在给新粉丝发消息" + ex.ToString());
+            }
+        }
+
+        //判断是否粉是否取关了
+        public bool isExistFans(string nick)
+        {
+            GetHttpItem.URL = string.Format(isExistFansPage, nick, WeiBoUser.uid);
+            var httpResult = HttpHelper.GetHtml(GetHttpItem);
+            var reg = new Regex("共搜索到(\\d+)个关于");
+            Match mc = reg.Match(httpResult.Html);
+            return int.Parse(mc.Groups[1].Value) > 0 ? true : false;
         }
 
         /// <summary>
@@ -285,11 +370,38 @@ namespace WeiBoGiveNotice
         /// <param name="maxUserCount"></param>
         public void SendMeesageToOldFans(string message, int maxUserCount)
         {
-            //循环
+            Thread thread = new Thread(() => SendMeesageToOldFun(message, maxUserCount));
+            thread.Start();
+        }
+
+        private void SendMeesageToOldFun(string message, int maxUserCount)
+        {
             //判断是否继续发送
             if (IsSendMeesageToOldFansRun)
             {
-
+                int pageNum = 1;
+                if (maxUserCount > 20)
+                {
+                    pageNum = maxUserCount % 20 == 0 ? maxUserCount : maxUserCount + 1;
+                }
+                var fansList = new List<Fans>();
+                int sentCount = 0;
+                for (int i = 1; i <= pageNum; i++)
+                {
+                    fansList = SearchFans(i);
+                    if (fansList.Count == 0) continue;//查询不到粉丝，就直接进入下一条
+                    foreach (var item in fansList)
+                    {
+                        sentCount++;
+                        if (sentCount <= maxUserCount)
+                        {
+                            SendMessage(item.uid, message);
+                            PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息" + item.nick);
+                            Thread.Sleep(2000);//停5秒再发送,后期读取配置文件
+                        }
+                    }
+                    Thread.Sleep(5000);
+                }
             }
         }
 
@@ -300,6 +412,8 @@ namespace WeiBoGiveNotice
             PostHttpItem.ContentType = "application/x-www-form-urlencoded";
             PostHttpItem.Header.Add("Origin", "https://api.weibo.com");
             PostHttpItem.Referer = "https://api.weibo.com/chat/ ";
+            //PostHttpItem.Encoding = Encoding.UTF8;
+            message = System.Web.HttpUtility.UrlEncode(message);
             PostHttpItem.Postdata = $"text={message}&uid={uid}&extensions={{\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}}&is_encoded=0&decodetime=1&source=209678993";
             HttpResult result = HttpHelper.GetHtml(PostHttpItem);
             var code = result.Html.ToWeiBoJsonResult<object>();
