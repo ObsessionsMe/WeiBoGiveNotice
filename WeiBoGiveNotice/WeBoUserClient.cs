@@ -274,7 +274,7 @@ namespace WeiBoGiveNotice
             PostHttpItem.ContentType = "application/x-www-form-urlencoded";
             PostHttpItem.Header.Add("Origin", "https://api.weibo.com");
             PostHttpItem.Referer = "https://api.weibo.com/chat/ ";
-            PostHttpItem.Postdata = "text=hello&uid=6823169570&extensions={\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}&is_encoded=0&decodetime=1&source=209678993";
+            PostHttpItem.Postdata = $"text={message}&uid={uid}&extensions={{\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}}&is_encoded=0&decodetime=1&source=209678993";
             HttpResult result = HttpHelper.GetHtml(PostHttpItem);
             var code = result.Html.ToWeiBoJsonResult<object>();
             if (code.error_code > 0)
