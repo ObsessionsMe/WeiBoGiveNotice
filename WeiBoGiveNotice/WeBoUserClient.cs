@@ -18,7 +18,6 @@ namespace WeiBoGiveNotice
         public WeBoUserClient()
         {
             HttpHelper = new HttpHelper();
-            loadCookie();
         }
 
         #region 委托类
@@ -113,10 +112,6 @@ namespace WeiBoGiveNotice
         /// </summary>
         private const string SearchFansPage = "https://weibo.com/{0}/fans?Pl_Official_RelationFans__88_page={1}";
 
-        /// <summary>
-        /// 主页
-        /// </summary>
-        private const string HomePage = "https://weibo.com/";
 
         /// <summary>
         ///  发消息api
@@ -125,10 +120,6 @@ namespace WeiBoGiveNotice
 
         private Dictionary<string, string> Cookies = new Dictionary<string, string>();
 
-        /// <summary>
-        /// 是否初始化中
-        /// </summary>
-        private bool IsInit = true;
 
         #endregion
 
@@ -145,13 +136,6 @@ namespace WeiBoGiveNotice
                 default:
                     break;
             }
-        }
-
-        private void loadCookie()
-        {
-            GetHttpItem.Method = "GET";
-            GetHttpItem.URL = HomePage;
-            var HomePageHttpResult = HttpHelper.GetHtml(GetHttpItem);
         }
 
         private void SetCookie(string cookieStr)
@@ -200,8 +184,39 @@ namespace WeiBoGiveNotice
 
             Thread qrcodeImageThread = new Thread(new ThreadStart(QrcodeImageThread));
             qrcodeImageThread.Start();
+            PrintMsg(PrintType.info, $"StartQrcodeLogin 开始扫码登陆!");
+
         }
 
+        /// <summary>
+        /// 初始化用户相关数据
+        /// </summary>
+        public void InitWeiBoUser()
+        {
+            var Res = new List<Fans>();
+            GetHttpItem.Method = "GET";
+            GetHttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, 1);
+            var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
+
+            var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
+
+            //解析粉丝列表
+            Fans fans = null;
+            foreach (Match match in fansList)
+            {
+                fans = new Fans();
+                fans.uid = match.Groups[1].Value;
+                fans.nick = match.Groups[2].Value;
+                fans.image = match.Groups[3].Value;
+                Res.Add(fans);
+            }
+
+            SetWeiBoUser(SearchFansPageHttpResult.Html);
+            LatestFans = new List<Fans>();
+            LatestFans = Res;
+
+            PrintMsg(PrintType.info, $"InitWeiBoUser 初始化成功");
+        }
 
         /// <summary>
         /// 粉丝查询
@@ -219,7 +234,6 @@ namespace WeiBoGiveNotice
 
             //解析粉丝列表
             Fans fans = null;
-            LatestFans = new List<Fans>();
             foreach (Match match in fansList)
             {
                 fans = new Fans();
@@ -229,11 +243,7 @@ namespace WeiBoGiveNotice
                 Res.Add(fans);
             }
 
-            if (pageNum == 1 && IsInit)
-            {
-                SetWeiBoUser(SearchFansPageHttpResult.Html);
-                LatestFans = Res;
-            }
+            PrintMsg(PrintType.info, $"SearchFans 查询成功 pageNum:{pageNum}!");
             return Res;
         }
 
@@ -294,6 +304,7 @@ namespace WeiBoGiveNotice
             }
             string jsonString = "{" + values.Replace("'", "\"").Replace("[", "").Replace("]=", ":").Replace(";", ",").TrimEnd(',') + "}";
             WeiBoUser = Newtonsoft.Json.JsonConvert.DeserializeObject<WeiBoUser>(jsonString);
+            PrintMsg(PrintType.info, "SetWeiBoUser 用户信息更新成功!");
         }
 
         private bool QrcodeImageSuccess { get; set; }
@@ -314,6 +325,7 @@ namespace WeiBoGiveNotice
                         var qrCodeApiRes = QrCodeImageApiHttpResult.Html.ToWeiBoJsonResult<QrImage>();
                         if (qrCodeApiRes.retcode == 20000000)
                         {
+                            PrintMsg(PrintType.info, "QrcodeImageThread_QrCodeImageApiHttpResult 获取二维码成功!");
                             var imageUrl = qrCodeApiRes.data.image;
                             if (imageUrl.IndexOf("http") != 0)
                             {
@@ -331,6 +343,7 @@ namespace WeiBoGiveNotice
                             var QrCodeCheckApiRes = QrCodeCheckApiHttpResult.Html.ToWeiBoJsonResult<QrImage>();
                             if (QrCodeCheckApiRes.retcode == 20000000)
                             {
+                                PrintMsg(PrintType.info, "QrcodeImageThread_QrCodeCheckApiRes_扫码成功!");
                                 //登陆用户认证中心
                                 GetHttpItem.URL = string.Format(SSOLoginApi, QrCodeCheckApiRes.data.alt, TimeStamp);
                                 var SSOLoginApiHttpResult = HttpHelper.GetHtml(GetHttpItem);
@@ -339,26 +352,30 @@ namespace WeiBoGiveNotice
                                 var SSOLoginApiRes = SSOLoginApiHttpResult.Html.ToWeiBoJsonResult<string>();
                                 if (SSOLoginApiRes.retcode == 0)
                                 {
-                                    foreach (string crossDomainUrl in SSOLoginApiRes.crossDomainUrlList)
-                                    {
-                                        //设置核心cookie
-                                        GetHttpItem.URL = crossDomainUrl;
-                                        var crossDomainUrl_HttpResult = HttpHelper.GetHtml(GetHttpItem);
-                                        SetCookie(crossDomainUrl_HttpResult.Cookie);
-                                    }
+                                    PrintMsg(PrintType.info, "QrcodeImageThread_SSOLoginApiRes_用户认证中心通过!");
+                                    //foreach (string crossDomainUrl in SSOLoginApiRes.crossDomainUrlList)
+                                    //{
+                                    //    //设置核心cookie
+                                    //    GetHttpItem.URL = crossDomainUrl;
+                                    //    var crossDomainUrl_HttpResult = HttpHelper.GetHtml(GetHttpItem);
+                                    //    SetCookie(crossDomainUrl_HttpResult.Cookie);
+                                    //}
+                                    //设置核心cookie
+                                    GetHttpItem.URL = SSOLoginApiRes.crossDomainUrlList[SSOLoginApiRes.crossDomainUrlList.Count - 1];
+                                    var crossDomainUrl_HttpResult = HttpHelper.GetHtml(GetHttpItem);
+                                    SetCookie(crossDomainUrl_HttpResult.Cookie);
+                                    PrintMsg(PrintType.info, "QrcodeImageThread_SSOLoginApiRes_登陆成功!");
 
                                     //登陆成功
                                     WeiBoUser = new WeiBoUser();
                                     WeiBoUser.uid = SSOLoginApiRes.uid;
-                                    //初始化粉丝列表
-                                    SearchFans(1);
+                                    //初始化用户信息
+                                    InitWeiBoUser();
                                     //设置二维码图片区显示用户头像
                                     QrCodeImageChange(WeiBoUser.avatar_large);
 
                                     //扫码登陆成功
                                     QrcodeImageSuccess = true;
-                                    //初始化结束
-                                    IsInit = false;
                                 }
                                 break;
                             }
