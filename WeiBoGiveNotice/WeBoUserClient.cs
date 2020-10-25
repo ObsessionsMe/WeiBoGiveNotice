@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -73,6 +74,10 @@ namespace WeiBoGiveNotice
         /// </summary>
         public bool IsSendMessageNewFansRun = false;
 
+        /// <summary>
+        /// 粉丝总页数
+        /// </summary>
+        public int FansPageCount { get; set; }
         #endregion
         #region 私有属性
         /// <summary>
@@ -82,6 +87,9 @@ namespace WeiBoGiveNotice
         {
             get { return (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000; }
         }
+
+
+        private ILog log = LogManager.GetLogger("weiBoLog");
 
         /// <summary>
         /// 请求帮助类
@@ -130,8 +138,10 @@ namespace WeiBoGiveNotice
             switch (printType)
             {
                 case PrintType.info:
+                    log.Debug(message);
                     break;
                 case PrintType.error:
+                    log.Error(message,exception);
                     break;
                 default:
                     break;
@@ -198,9 +208,13 @@ namespace WeiBoGiveNotice
             GetHttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, 1);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
 
+            //解析粉丝列表
             var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
 
-            //解析粉丝列表
+            //解析粉丝总页数
+            var FansPageCount = Regex.Matches(SearchFansPageHttpResult.Html, "Pl_Official_RelationFans__88_page=(\\d+)#").Cast<Match>().Select(s=>Convert.ToInt32(s.Groups[1].Value)).Max();
+
+            
             Fans fans = null;
             foreach (Match match in fansList)
             {
@@ -214,6 +228,8 @@ namespace WeiBoGiveNotice
             SetWeiBoUser(SearchFansPageHttpResult.Html);
             LatestFans = new List<Fans>();
             LatestFans = Res;
+
+            
 
             PrintMsg(PrintType.info, $"InitWeiBoUser 初始化成功");
         }
