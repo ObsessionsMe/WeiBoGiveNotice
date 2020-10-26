@@ -18,6 +18,7 @@ namespace WeiBoGiveNotice
         public Form1()
         {
             InitializeComponent();
+
         }
 
 
@@ -47,7 +48,7 @@ namespace WeiBoGiveNotice
 
         private  void QrCodeLoginImageChange(string imageUrl)
         {
-            userPhoto.Load(imageUrl); 
+            userPhoto.Load(imageUrl);
         }
 
 
@@ -70,7 +71,6 @@ namespace WeiBoGiveNotice
                 MessageBox.Show("向前打招呼数量必须大于0");
                 return;
             }
-            weBoUserClient.IsSendMeesageToOldFansRun = true;
             weBoUserClient.SendMeesageToOldFans(officical.Text, CallOldFansNums);
             //this.Enabled = true;
          }

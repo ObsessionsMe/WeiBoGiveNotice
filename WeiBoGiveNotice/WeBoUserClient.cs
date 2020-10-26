@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,16 @@ namespace WeiBoGiveNotice
         /// 当前用户对象
         /// </summary>
         public WeiBoUser WeiBoUser { get; set; }
+
+        /// <summary>
+        /// 客户端版本
+        /// </summary>
+        public VersionLevel VersionLevel { get; set; }
+
+        /// <summary>
+        /// 粉丝总页数
+        /// </summary>
+        public int FansPageCount { get; set; }
 
         /// <summary>
         /// 最新粉丝
@@ -122,9 +133,14 @@ namespace WeiBoGiveNotice
         private const string SSOLoginApi = "https://login.sina.com.cn/sso/login.php?entry=weibo&returntype=TEXT&crossdomain=1&cdult=3&domain=weibo.com&alt={0}&savestate=30&callback=STK_{1}";
 
         /// <summary>
-        /// 粉丝列表页
+        /// 粉丝接口(一版本)
         /// </summary>
-        private const string SearchFansPage = "https://weibo.com/{0}/fans?Pl_Official_RelationFans__88_page={1}";
+        private const string SearchFansApiLv1 = "https://weibo.com/{0}/fans?Pl_Official_RelationFans__88_page={1}";
+
+        /// <summary>
+        /// 粉丝接口（二版本）
+        /// </summary>
+        private const string SearchFansApiLv2 = "https://weibo.com/ajax/friendships/friends?relate=fans&page={0}&uid={1}&type=all";
 
         private const string isExistFansPage = "https://weibo.com/{1}/fans?search={0}";
 
@@ -148,7 +164,7 @@ namespace WeiBoGiveNotice
                     log.Debug(message);
                     break;
                 case PrintType.error:
-                    log.Error(message,exception);
+                    log.Error(message, exception);
                     break;
                 default:
                     break;
@@ -205,52 +221,98 @@ namespace WeiBoGiveNotice
 
         }
 
+        private void InitLv1Fans(string HtmlContent)
+        {
+            var Res = new List<Fans>();
+            //解析粉丝列表
+            var fansList = Regex.Matches(HtmlContent, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
+
+            //解析粉丝总页数
+            var pageNumMatches = Regex.Matches(HtmlContent, "Pl_Official_RelationFans__88_page=(\\d+)#");
+            if (pageNumMatches.Count > 0)
+            {
+                 FansPageCount = pageNumMatches.Cast<Match>().Select(s => Convert.ToInt32(s.Groups[1].Value)).Max();
+            }
+            else
+            {
+                FansPageCount = 1;
+            }
+
+            Res = fansList.Cast<Match>().Select(s => new Fans()
+            {
+                uid = s.Groups[1].Value,
+                nick = s.Groups[2].Value,
+                image = s.Groups[3].Value
+            }).ToList();
+
+            LatestFans = Res;
+        }
+
         /// <summary>
         /// 初始化用户相关数据
         /// </summary>
         public void InitWeiBoUser()
         {
-            var Res = new List<Fans>();
             GetHttpItem.Method = "GET";
-            GetHttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, 1);
+            GetHttpItem.URL = string.Format(SearchFansApiLv1, WeiBoUser.uid, 1);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
 
-            //解析粉丝列表
-            var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
+            SetWeiBoUser(SearchFansPageHttpResult.Html);
 
-            //解析粉丝总页数
-            var FansPageCount = Regex.Matches(SearchFansPageHttpResult.Html, "Pl_Official_RelationFans__88_page=(\\d+)#").Cast<Match>().Select(s=>Convert.ToInt32(s.Groups[1].Value)).Max();
-
-            
-            Fans fans = null;
-            foreach (Match match in fansList)
+            switch (VersionLevel)
             {
-                fans = new Fans();
-                fans.uid = match.Groups[1].Value;
-                fans.nick = match.Groups[2].Value;
-                fans.image = match.Groups[3].Value;
-                Res.Add(fans);
+                case VersionLevel.None:
+                    break;
+                case VersionLevel.Lv1:
+                    InitLv1Fans(SearchFansPageHttpResult.Html);
+                    break;
+                case VersionLevel.Lv2:
+                    InitLv2Fans();
+                    break;
+                default:
+                    break;
             }
 
-            SetWeiBoUser(SearchFansPageHttpResult.Html);
-            LatestFans = new List<Fans>();
-            LatestFans = Res;
-
-            
 
             PrintMsg(PrintType.info, $"InitWeiBoUser 初始化成功");
         }
 
+        private void InitLv2Fans()
+        {
+            LatestFans = SearchFansLv2(1);
+        }
+
+
         /// <summary>
-        /// 粉丝查询
+        /// 粉丝查询(二版本)
         /// </summary>
         /// <param name="pageNum">页号</param>
-        public List<Fans> SearchFans(int pageNum)
+        public List<Fans> SearchFansLv2(int pageNum)
+        {
+            var Res = new List<Fans>();
+            GetHttpItem.Method = "GET";
+            GetHttpItem.URL = string.Format(SearchFansApiLv2, 1, WeiBoUser.uid);
+            var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
+            var JsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(SearchFansPageHttpResult.Html);
+            Res = JsonObject["users"].Value<JArray>().Select(s => new Fans
+            {
+                uid = s.Value<string>("id"),
+                nick = s.Value<string>("screen_name"),
+                image = s.Value<string>("avatar_large"),
+            }).ToList();
+            return Res;
+        }
+
+        /// <summary>
+        /// 粉丝查询(一版本)
+        /// </summary>
+        /// <param name="pageNum">页号</param>
+        public List<Fans> SearchFansLv1(int pageNum)
         {
             var Res = new List<Fans>();
             //粉丝查询
             GetHttpItem.Method = "GET";
-            GetHttpItem.URL = string.Format(SearchFansPage, WeiBoUser.uid, pageNum);
+            GetHttpItem.URL = string.Format(SearchFansApiLv1, WeiBoUser.uid, pageNum);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
 
             var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
@@ -266,7 +328,7 @@ namespace WeiBoGiveNotice
                 Res.Add(fans);
             }
 
-            PrintMsg(PrintType.info, $"SearchFans 查询成功 pageNum:{pageNum}!");
+            PrintMsg(PrintType.info, $"SearchFansLv1 查询成功 pageNum:{pageNum}!");
             return Res;
         }
 
@@ -304,7 +366,8 @@ namespace WeiBoGiveNotice
                     while (isExistlastFans)
                     {
                         pageNum++;
-                        fansList = SearchFans(pageNum);
+                        //fansList = SearchFansLv1(pageNum);
+                        fansList = SearchFnas(pageNum);
                         if (fansList.Count == 0)
                         {
                             return;
@@ -377,32 +440,55 @@ namespace WeiBoGiveNotice
         private void SendMeesageToOldFun(string message, int maxUserCount)
         {
             //判断是否继续发送
-            if (IsSendMeesageToOldFansRun)
+            //判断是否继续发送
+            var fansList = new List<Fans>();
+            int sentCount = 0;
+            int pageNum = 1;
+            IsSendMeesageToOldFansRun = true;
+            while (IsSendMeesageToOldFansRun)
             {
-                int pageNum = 1;
-                if (maxUserCount > 20)
+                fansList = SearchFnas(pageNum);
+                pageNum++;
+                if (fansList.Count == 0)
                 {
-                    pageNum = maxUserCount % 20 == 0 ? maxUserCount : maxUserCount + 1;
+                    IsSendMeesageToOldFansRun = false;
+                    return;
                 }
-                var fansList = new List<Fans>();
-                int sentCount = 0;
-                for (int i = 1; i <= pageNum; i++)
+                foreach (var item in fansList)
                 {
-                    fansList = SearchFans(i);
-                    if (fansList.Count == 0) continue;//查询不到粉丝，就直接进入下一条
-                    foreach (var item in fansList)
+                    sentCount++;
+                    SendMessage(item.uid, message);
+                    PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息" + item.nick);
+                    Thread.Sleep(RandomNumber());
+                    PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息，睡眠毫秒数为：" + RandomNumber());
+                    if (sentCount == maxUserCount)
                     {
-                        sentCount++;
-                        if (sentCount <= maxUserCount)
-                        {
-                            SendMessage(item.uid, message);
-                            PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息" + item.nick);
-                            Thread.Sleep(2000);//停5秒再发送,后期读取配置文件
-                        }
+                        IsSendMeesageToOldFansRun = false;
                     }
-                    Thread.Sleep(5000);
                 }
+                Thread.Sleep(RandomNumber(10, 20));
+                PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 刷新粉丝时间，睡眠毫秒数为：" + RandomNumber(10, 20));
             }
+        }
+
+        private List<Fans> SearchFnas(int pageNum)
+        {
+            var fans = new List<Fans>();
+            switch (VersionLevel)
+            {
+                case VersionLevel.None:
+                    break;
+                case VersionLevel.Lv1:
+                    //老版
+                    fans = SearchFansLv1(pageNum);
+                    break;
+                case VersionLevel.Lv2:
+                    fans = SearchFansLv2(pageNum);
+                    break;
+                default:
+                    break;
+            }
+            return fans;
         }
 
         public void SendMessage(string uid, string message)
@@ -417,24 +503,58 @@ namespace WeiBoGiveNotice
             PostHttpItem.Postdata = $"text={message}&uid={uid}&extensions={{\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}}&is_encoded=0&decodetime=1&source=209678993";
             HttpResult result = HttpHelper.GetHtml(PostHttpItem);
             var code = result.Html.ToWeiBoJsonResult<object>();
+            //判断是否发送失败
             if (code.error_code > 0)
             {
                 PrintMsg(PrintType.error, "方法:SendMessage 出错" + code.error);
             }
         }
 
+        /// <summary>
+        ///  获取两者间随机数
+        /// </summary>
+        /// <param name="minVal">最小值，默认20</param>
+        /// <param name="maxVal">最大值，默认40</param>
+        /// <returns></returns>
+        public int RandomNumber(int minVal = 20, int maxVal = 40)
+        {
+            int a = new Random().Next(minVal * 1000, maxVal * 1000);
+            return new Random().Next(minVal * 1000, maxVal * 1000);
+        }
 
         private void SetWeiBoUser(string HttpContent)
         {
-            string values = string.Empty;
-            var Matches = Regex.Matches(HttpContent, "\\['.*?'\\]='.*?';");
-            foreach (Match Match in Matches)
+            var version = VersionLevel.None;
+
+            var versionMatch = Regex.Match(HttpContent, "CLIENT: '(.*?)'");
+            if (string.IsNullOrEmpty(versionMatch.Value))
             {
-                values += Match.Value;
+                version = VersionLevel.Lv1;
+                string values = string.Empty;
+                var Matches = Regex.Matches(HttpContent, "\\['.*?'\\]='.*?';");
+                foreach (Match Match in Matches)
+                {
+                    values += Match.Value;
+                }
+                string jsonString = "{" + values.Replace("'", "\"").Replace("[", "").Replace("]=", ":").Replace(";", ",").TrimEnd(',') + "}";
+                WeiBoUser = Newtonsoft.Json.JsonConvert.DeserializeObject<WeiBoUser>(jsonString);
             }
-            string jsonString = "{" + values.Replace("'", "\"").Replace("[", "").Replace("]=", ":").Replace(";", ",").TrimEnd(',') + "}";
-            WeiBoUser = Newtonsoft.Json.JsonConvert.DeserializeObject<WeiBoUser>(jsonString);
+            else
+            {
+                version = VersionLevel.Lv2;
+                PrintMsg(PrintType.info, $"SetWeiBoUser 当前版本号 :{versionMatch.Groups[1].Value}!");
+                var cfgMatche = Regex.Match(HttpContent, "window.\\$CONFIG = (\\{.*?\\});\\}catch");
+                var JsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(cfgMatche.Groups[1].Value);
+                WeiBoUser = new WeiBoUser()
+                {
+                    uid = JsonObject.Value<string>("uid"),
+                    nick = JsonObject["user"].Value<string>("screen_name"),
+                    avatar_large = JsonObject["user"].Value<string>("avatar_large")
+                };
+            }
             PrintMsg(PrintType.info, "SetWeiBoUser 用户信息更新成功!");
+
+            VersionLevel = version;
         }
 
         private bool QrcodeImageSuccess { get; set; }
@@ -668,6 +788,14 @@ namespace WeiBoGiveNotice
         public string error { get; set; }
         public string request { get; set; }
         public int error_code { get; set; }
+    }
+
+
+    public enum VersionLevel
+    {
+        None = 0,
+        Lv1 = 1,
+        Lv2 = 2
     }
 
     /// <summary>
