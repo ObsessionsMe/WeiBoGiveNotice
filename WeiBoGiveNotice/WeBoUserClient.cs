@@ -461,9 +461,10 @@ namespace WeiBoGiveNotice
                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息" + item.nick);
                     Thread.Sleep(RandomNumber());
                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息，睡眠毫秒数为：" + RandomNumber());
-                    if (sentCount == maxUserCount)
+                    if (sentCount >= maxUserCount)
                     {
                         IsSendMeesageToOldFansRun = false;
+                        return;
                     }
                 }
                 Thread.Sleep(RandomNumber(10, 20));
