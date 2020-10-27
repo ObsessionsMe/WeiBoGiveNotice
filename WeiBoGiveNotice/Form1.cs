@@ -24,21 +24,51 @@ namespace WeiBoGiveNotice
 
         private WeBoUserClient weBoUserClient;
 
+        private void SetControlText(Control control, string value)
+        {
+            control.Invoke(new MethodInvoker(delegate () { control.Text = value; }));
+        }
+
         //初始化
         private void Form1_Load(object sender, EventArgs e)
         {
             try
             {
-                //注册微博用户客户端
-                weBoUserClient = new WeBoUserClient();
-                weBoUserClient.QrCodeImageChange=new WeBoUserClient.QrCodeLoginImageChange(QrCodeLoginImageChange);
+                #region 注册微博用户客户端
 
-                //显示图片
-                //Image img = Image.FromFile(@"E:\PerTerProject\WeiBoGiveNotice\WeiBoGiveNotice\timg.jpg");
-                //userPhoto.Image = img;
-                //第一步: 监听二维码是否有扫码操作，获取到微博账号基础信息后在窗体上展示
+                weBoUserClient = new WeBoUserClient();
+                weBoUserClient.QrCodeImageChange = delegate (string imageUrl)
+                {
+                    userPhoto.Invoke(new MethodInvoker(delegate () { userPhoto.Load(imageUrl); }));
+                };
+                weBoUserClient.UserInfoChange = delegate (WeiBoUser user)
+                {
+                    userPhoto.Invoke(new MethodInvoker(delegate () { userPhoto.Load(user.avatar_large); }));
+                    SetControlText(userName, user.nick);
+                };
+                weBoUserClient.NumberRunsChange = delegate (int value)
+                {
+                    SetControlText(runNumber, value.ToString());
+                };
+                weBoUserClient.LastSendMessageTimeChange = delegate (DateTime? date)
+                {
+                    SetControlText(label7, date.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+                };
+                weBoUserClient.LastSendMessageUserChange = delegate (Fans fans)
+                {
+                    SetControlText(lastUserName, fans.nick);
+                };
+                weBoUserClient.OldFansSendMessageStartUserChange = delegate (Fans fans)
+                {
+                    SetControlText(beginSite, fans.nick);
+                };
+                weBoUserClient.TodaySendMessageCountChange = delegate (int value) { SetControlText(runNumberToday, value.ToString()); };
+                weBoUserClient.IsSendMessageNewFansRunChange = delegate (bool value) { SetControlText(BeginDown, value ? "停止" : "开始"); };
+                weBoUserClient.IsSendMeesageToOldFansRunChange = delegate (bool value) { SetControlText(button1, value ? "停止" : "开始"); };
+
+                #endregion
+
                 weBoUserClient.StartQrcodeLogin();
-                //第二步: 
             }
             catch (Exception ex)
             {
@@ -46,34 +76,38 @@ namespace WeiBoGiveNotice
             }
         }
 
-        private  void QrCodeLoginImageChange(string imageUrl)
-        {
-            userPhoto.Load(imageUrl);
-        }
-
 
         //点击开始(向前打招呼)--给老粉丝发消息
         private void button1_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(officical.Text))
+            if (!weBoUserClient.IsSendMeesageToOldFansRun)
             {
-                MessageBox.Show("文案不能为空");
-                return;
+                if (string.IsNullOrEmpty(officical.Text))
+                {
+                    MessageBox.Show("文案不能为空");
+                    return;
+                }
+                if (string.IsNullOrEmpty(CallOldFansNum.Text))
+                {
+                    MessageBox.Show("向前打招呼数量不能为空");
+                    return;
+                }
+                int CallOldFansNums = int.Parse(CallOldFansNum.Text);
+                if (CallOldFansNums <= 0)
+                {
+                    MessageBox.Show("向前打招呼数量必须大于0");
+                    return;
+                }
+                weBoUserClient.SendMeesageToOldFans(officical.Text, CallOldFansNums, delegate (int value)
+                {
+                    SetControlText(CallCount, value.ToString());
+                });
             }
-            if (string.IsNullOrEmpty(CallOldFansNum.Text))
+            else
             {
-                MessageBox.Show("向前打招呼数量不能为空");
-                return;
+                weBoUserClient.IsSendMeesageToOldFansRun = false;
             }
-            int CallOldFansNums = int.Parse(CallOldFansNum.Text);
-            if (CallOldFansNums <= 0)
-            {
-                MessageBox.Show("向前打招呼数量必须大于0");
-                return;
-            }
-            weBoUserClient.SendMeesageToOldFans(officical.Text, CallOldFansNums);
-            //this.Enabled = true;
-         }
+        }
 
         //点击系统配置
         private void setConfig_Click(object sender, EventArgs e)
@@ -86,23 +120,38 @@ namespace WeiBoGiveNotice
         //点击开始(下方按钮)--给新粉丝发消息
         private void BeginDown_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(officical.Text))
+            if (!weBoUserClient.IsSendMessageNewFansRun)
             {
-                MessageBox.Show("文案不能为空");
-                return;
+                if (string.IsNullOrEmpty(officical.Text))
+                {
+                    MessageBox.Show("文案不能为空");
+                    return;
+                }
+                if (string.IsNullOrEmpty(CallNewFansNum.Text))
+                {
+                    MessageBox.Show("向前打招呼数量不能为空");
+                    return;
+                }
+                int CallNewFansNums = int.Parse(CallNewFansNum.Text);
+                if (CallNewFansNums <= 0)
+                {
+                    MessageBox.Show("向前打招呼数量必须大于0");
+                    return;
+                }
+                weBoUserClient.ListenNewFans(officical.Text, CallNewFansNums, delegate (int value)
+                {
+                    SetControlText(label34, value.ToString());
+                });
             }
-            if (string.IsNullOrEmpty(CallNewFansNum.Text))
+            else
             {
-                MessageBox.Show("向前打招呼数量不能为空");
-                return;
+                weBoUserClient.IsSendMessageNewFansRun = false;
             }
-            int CallNewFansNums = int.Parse(CallNewFansNum.Text);
-            if (CallNewFansNums <= 0)
-            {
-                MessageBox.Show("向前打招呼数量必须大于0");
-                return;
-            }
-            weBoUserClient.ListenNewFans(officical.Text, CallNewFansNums);
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            System.Environment.Exit(0);
         }
     }
 }

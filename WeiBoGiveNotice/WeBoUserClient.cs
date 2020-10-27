@@ -23,25 +23,195 @@ namespace WeiBoGiveNotice
         }
 
         #region 委托类
+
         /// <summary>
-        /// 二维码图片变更委托方法
+        /// 通用值变更回调委托类
         /// </summary>
-        /// <param name="imageUrl"></param>
-        public delegate void QrCodeLoginImageChange(string imageUrl);
+        /// <param name="value"></param>
+        public delegate void ValueChange<T>(T value);
+
+        #endregion
+
+
+        #region 委托属性
+
+
+        /// <summary>
+        /// 二维码获取与变更回调方法
+        /// </summary>
+        public ValueChange<string> QrCodeImageChange { get; set; }
+
+        /// <summary>
+        /// 用户信息变更回调方法
+        /// </summary>
+        public ValueChange<WeiBoUser> UserInfoChange { get; set; }
+
+
+        /// <summary>
+        /// 运行以来次数变更回调
+        /// </summary>
+        public ValueChange<int> NumberRunsChange { get; set; }
+
+        /// <summary>
+        /// 最新发送消息的时间变更回调
+        /// </summary>
+        public ValueChange<DateTime?> LastSendMessageTimeChange { get; set; }
+
+        /// <summary>
+        /// 最新发送消息的用户变更回调
+        /// </summary>
+        public ValueChange<Fans> LastSendMessageUserChange { get; set; }
+
+        /// <summary>
+        /// 老粉丝发消息开始位置用户变更回调
+        /// </summary>
+        public ValueChange<Fans> OldFansSendMessageStartUserChange { get; set; }
+
+        /// <summary>
+        /// 今日发送消息次数变更回调
+        /// </summary>
+        public ValueChange<int> TodaySendMessageCountChange { get; set; }
+
+        /// <summary>
+        /// 是否在发消息给老粉丝标识变更回调
+        /// </summary>
+        public ValueChange<bool> IsSendMeesageToOldFansRunChange { get; set; }
+
+        /// <summary>
+        /// 是否在发消息给新粉丝标识变更回调
+        /// </summary>
+        public ValueChange<bool> IsSendMessageNewFansRunChange { get; set; }
 
         #endregion
 
         #region 公有属性
 
-        /// <summary>
-        /// 二维码获取与变更回调方法
-        /// </summary>
-        public QrCodeLoginImageChange QrCodeImageChange { get; set; }
 
+        private int _NumberRuns = 0;
+        /// <summary>
+        /// 运行以来次数
+        /// </summary>
+        public int NumberRuns
+        {
+            get { return _NumberRuns; }
+            set
+            {
+                if (NumberRunsChange != null)
+                {
+                    NumberRunsChange(value);
+                }
+                _NumberRuns = value;
+            }
+        }
+
+
+
+        private DateTime? _LastSendMessageTime = null;
+        /// <summary>
+        /// 最新发送消息的时间
+        /// </summary>
+        public DateTime? LastSendMessageTime
+        {
+            get { return _LastSendMessageTime; }
+            set
+            {
+                if (LastSendMessageTimeChange != null)
+                {
+                    LastSendMessageTimeChange(value);
+                }
+                _LastSendMessageTime = value;
+            }
+        }
+
+
+        private Fans _LastSendMessageUser = null;
+        /// <summary>
+        /// 最新发送消息的用户
+        /// </summary>
+        public Fans LastSendMessageUser
+        {
+            get { return _LastSendMessageUser; }
+            set
+            {
+                if (LastSendMessageUserChange != null)
+                {
+                    LastSendMessageUserChange(value);
+                }
+                _LastSendMessageUser = value;
+            }
+        }
+
+
+
+        public int _TodaySendMessageCount = 0;
+        /// <summary>
+        /// 今日发送消息次数
+        /// </summary>
+        public int TodaySendMessageCount
+        {
+            get { return _TodaySendMessageCount; }
+            set
+            {
+                if (TodaySendMessageCountChange != null)
+                {
+                    TodaySendMessageCountChange(value);
+                }
+                _TodaySendMessageCount = value;
+            }
+        }
+
+        private bool _IsSendMeesageToOldFansRun = false;
+        /// <summary>
+        /// 是否在发消息给老粉丝
+        /// </summary>
+        public bool IsSendMeesageToOldFansRun
+        {
+            get { return _IsSendMeesageToOldFansRun; }
+            set
+            {
+                if (IsSendMeesageToOldFansRunChange != null)
+                {
+                    IsSendMeesageToOldFansRunChange(value);
+                }
+                _IsSendMeesageToOldFansRun = value;
+            }
+        }
+
+
+        private bool _IsSendMessageNewFansRun = false;
+        /// <summary>
+        /// 是否在发消息给新粉丝
+        /// </summary>
+        public bool IsSendMessageNewFansRun
+        {
+            get { return _IsSendMessageNewFansRun; }
+            set
+            {
+                if (IsSendMessageNewFansRunChange != null)
+                {
+                    IsSendMessageNewFansRunChange(value);
+                }
+                _IsSendMessageNewFansRun = value;
+            }
+        }
+
+
+        private WeiBoUser _WeiBoUser = null;
         /// <summary>
         /// 当前用户对象
         /// </summary>
-        public WeiBoUser WeiBoUser { get; set; }
+        public WeiBoUser WeiBoUser
+        {
+            get { return _WeiBoUser; }
+            set
+            {
+                if (UserInfoChange != null)
+                {
+                    UserInfoChange(value);
+                }
+                _WeiBoUser = value;
+            }
+        }
 
         /// <summary>
         /// 客户端版本
@@ -58,33 +228,6 @@ namespace WeiBoGiveNotice
         /// </summary>
         public List<Fans> LatestFans { get; set; }
 
-        /// <summary>
-        /// 运行以来次数
-        /// </summary>
-        public int NumberRuns { get; set; }
-        /// <summary>
-        /// 最新发送消息的时间
-        /// </summary>
-        public DateTime LastSendMessageTime { get; set; }
-        /// <summary>
-        /// 最新发送消息的用户
-        /// </summary>
-        public string LastSendMessageUser { get; set; }
-        /// <summary>
-        /// 今日发送消息次数
-        /// </summary>
-        public int TodaySendMessageCount { get; set; }
-
-        /// <summary>
-        /// 是否在发消息给老粉丝
-        /// </summary>
-        public bool IsSendMeesageToOldFansRun = false;
-
-        /// <summary>
-        /// 是否在发消息给新粉丝
-        /// </summary>
-        public bool IsSendMessageNewFansRun = false;
-
         //系统配置信息
         public int NewFansRefresh_Begin { get; set; }
         public int NewFansRefresh_End { get; set; }
@@ -96,7 +239,30 @@ namespace WeiBoGiveNotice
         public int OldFansCall_Begin { get; set; }
         public int OldFansCall_End { get; set; }
         #endregion
+
         #region 私有属性
+
+        private string uid { get; set; }
+
+
+        private string _QrImageUrl;
+        /// <summary>
+        /// 二维码图像属性
+        /// </summary>
+        private string QrImageUrl
+        {
+            get { return _QrImageUrl; }
+            set
+            {
+                if (QrCodeImageChange != null)
+                {
+                    QrCodeImageChange(value);
+                }
+                _QrImageUrl = value;
+            }
+        }
+
+
         /// <summary>
         /// 时间戳
         /// </summary>
@@ -112,10 +278,6 @@ namespace WeiBoGiveNotice
         /// 请求帮助类
         /// </summary>
         private HttpHelper HttpHelper { get; set; }
-
-        private HttpItem GetHttpItem = new HttpItem();
-
-        private HttpItem PostHttpItem = new HttpItem();
 
         /// <summary>
         /// 二维码信息获取接口
@@ -150,12 +312,20 @@ namespace WeiBoGiveNotice
         /// </summary>
         private const string SendMessageApi = "https://api.weibo.com/webim/2/direct_messages/new.json";
 
+
+        /// <summary>
+        /// 用户标识cookie
+        /// </summary>
         private Dictionary<string, string> Cookies = new Dictionary<string, string>();
-
-
         #endregion
 
 
+        /// <summary>
+        /// 统一消息处理
+        /// </summary>
+        /// <param name="printType"></param>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
         private void PrintMsg(PrintType printType, string message, Exception exception = null)
         {
             switch (printType)
@@ -171,6 +341,10 @@ namespace WeiBoGiveNotice
             }
         }
 
+        /// <summary>
+        /// 更新cookie
+        /// </summary>
+        /// <param name="cookieStr"></param>
         private void SetCookie(string cookieStr)
         {
             cookieStr += ";";
@@ -197,11 +371,14 @@ namespace WeiBoGiveNotice
                     }
                 }
             }
-            GetHttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
-            PostHttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
+            //GetHttpItem.Cookie = );
+            //PostHttpItem.Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value));
         }
 
-
+        private HttpItem CreateHttpItem()
+        {
+            return new HttpItem() { Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value)) };
+        }
 
         /// <summary>
         /// 开始扫码登陆
@@ -215,7 +392,7 @@ namespace WeiBoGiveNotice
                 throw new Exception("QrCodeImageChange 未绑定!");
             }
 
-            Thread qrcodeImageThread = new Thread(new ThreadStart(QrcodeImageThread));
+            Thread qrcodeImageThread = new Thread(() => QrcodeImageThread());
             qrcodeImageThread.Start();
             PrintMsg(PrintType.info, $"StartQrcodeLogin 开始扫码登陆!");
 
@@ -231,7 +408,7 @@ namespace WeiBoGiveNotice
             var pageNumMatches = Regex.Matches(HtmlContent, "Pl_Official_RelationFans__88_page=(\\d+)#");
             if (pageNumMatches.Count > 0)
             {
-                 FansPageCount = pageNumMatches.Cast<Match>().Select(s => Convert.ToInt32(s.Groups[1].Value)).Max();
+                FansPageCount = pageNumMatches.Cast<Match>().Select(s => Convert.ToInt32(s.Groups[1].Value)).Max();
             }
             else
             {
@@ -253,8 +430,9 @@ namespace WeiBoGiveNotice
         /// </summary>
         public void InitWeiBoUser()
         {
+            var GetHttpItem = CreateHttpItem();
             GetHttpItem.Method = "GET";
-            GetHttpItem.URL = string.Format(SearchFansApiLv1, WeiBoUser.uid, 1);
+            GetHttpItem.URL = string.Format(SearchFansApiLv1, uid, 1);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
 
             SetWeiBoUser(SearchFansPageHttpResult.Html);
@@ -290,6 +468,7 @@ namespace WeiBoGiveNotice
         public List<Fans> SearchFansLv2(int pageNum)
         {
             var Res = new List<Fans>();
+            var GetHttpItem = CreateHttpItem();
             GetHttpItem.Method = "GET";
             GetHttpItem.URL = string.Format(SearchFansApiLv2, 1, WeiBoUser.uid);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
@@ -311,6 +490,7 @@ namespace WeiBoGiveNotice
         {
             var Res = new List<Fans>();
             //粉丝查询
+            var GetHttpItem = CreateHttpItem();
             GetHttpItem.Method = "GET";
             GetHttpItem.URL = string.Format(SearchFansApiLv1, WeiBoUser.uid, pageNum);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
@@ -337,13 +517,13 @@ namespace WeiBoGiveNotice
         /// </summary>
         /// <param name="message">发送的消息内容</param>
         /// <param name="maxUserCount">最大用户数量</param>
-        public void ListenNewFans(string message, int maxUserCount)
+        public void ListenNewFans(string message, int maxUserCount, ValueChange<int> valueChange)
         {
-            Thread thread = new Thread(() => SendMeesageToNewFans(message, maxUserCount));
+            Thread thread = new Thread(() => SendMeesageToNewFans(message, maxUserCount, valueChange));
             thread.Start();
         }
 
-        private void SendMeesageToNewFans(string message, int maxUserCount)
+        private void SendMeesageToNewFans(string message, int maxUserCount, ValueChange<int> valueChange)
         {
             try
             {
@@ -363,7 +543,7 @@ namespace WeiBoGiveNotice
                     bool isExistlastFans = true;
                     bool bo = true;
                     sentFans = new List<Fans>();
-                    while (isExistlastFans)
+                    while (isExistlastFans && IsSendMessageNewFansRun)
                     {
                         pageNum++;
                         //fansList = SearchFansLv1(pageNum);
@@ -388,12 +568,16 @@ namespace WeiBoGiveNotice
                             //发消息
                             for (int i = 0; i < fansList.Count; i++)
                             {
-                                if (fansList[i].uid == LatestFans[0].uid)
+                                if (fansList[i].uid == LatestFans[0].uid|| !IsSendMessageNewFansRun)
                                 {
                                     break;
                                 }
-                                SendMessage(fansList[i].uid, message);
+                                SendMessage(fansList[i], message);
                                 sentFansNum++;
+                                if (valueChange != null)
+                                {
+                                    valueChange(maxUserCount - sentFansNum);
+                                }
                                 if (maxUserCount == sentFansNum)
                                 {
                                     //达到打招呼上线后，退出循环
@@ -419,6 +603,7 @@ namespace WeiBoGiveNotice
         //判断是否粉是否取关了
         public bool isExistFans(string nick)
         {
+            var GetHttpItem = CreateHttpItem();
             GetHttpItem.URL = string.Format(isExistFansPage, nick, WeiBoUser.uid);
             var httpResult = HttpHelper.GetHtml(GetHttpItem);
             var reg = new Regex("共搜索到(\\d+)个关于");
@@ -431,13 +616,13 @@ namespace WeiBoGiveNotice
         /// </summary>
         /// <param name="message"></param>
         /// <param name="maxUserCount"></param>
-        public void SendMeesageToOldFans(string message, int maxUserCount)
+        public void SendMeesageToOldFans(string message, int maxUserCount,ValueChange<int> valueChange)
         {
-            Thread thread = new Thread(() => SendMeesageToOldFun(message, maxUserCount));
+            Thread thread = new Thread(() => SendMeesageToOldFun(message, maxUserCount, valueChange));
             thread.Start();
         }
 
-        private void SendMeesageToOldFun(string message, int maxUserCount)
+        private void SendMeesageToOldFun(string message, int maxUserCount, ValueChange<int> valueChange)
         {
             //判断是否继续发送
             //判断是否继续发送
@@ -457,7 +642,17 @@ namespace WeiBoGiveNotice
                 foreach (var item in fansList)
                 {
                     sentCount++;
-                    SendMessage(item.uid, message);
+                    SendMessage(item, message);
+                    if (valueChange != null)
+                    {
+                        valueChange(maxUserCount - sentCount);
+                    }
+                    if (sentCount == 1)
+                    {
+                        if (OldFansSendMessageStartUserChange != null) {
+                            OldFansSendMessageStartUserChange(item);
+                        }
+                    }
                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息" + item.nick);
                     Thread.Sleep(RandomNumber());
                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息，睡眠毫秒数为：" + RandomNumber());
@@ -465,6 +660,10 @@ namespace WeiBoGiveNotice
                     {
                         IsSendMeesageToOldFansRun = false;
                         return;
+                    }
+                    else if (!IsSendMeesageToOldFansRun)
+                    {
+                        break;
                     }
                 }
                 Thread.Sleep(RandomNumber(10, 20));
@@ -492,8 +691,9 @@ namespace WeiBoGiveNotice
             return fans;
         }
 
-        public void SendMessage(string uid, string message)
+        public void SendMessage(Fans fans, string message)
         {
+            var PostHttpItem = CreateHttpItem();
             PostHttpItem.Method = "post";
             PostHttpItem.URL = SendMessageApi;
             PostHttpItem.ContentType = "application/x-www-form-urlencoded";
@@ -501,13 +701,20 @@ namespace WeiBoGiveNotice
             PostHttpItem.Referer = "https://api.weibo.com/chat/ ";
             //PostHttpItem.Encoding = Encoding.UTF8;
             message = System.Web.HttpUtility.UrlEncode(message);
-            PostHttpItem.Postdata = $"text={message}&uid={uid}&extensions={{\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}}&is_encoded=0&decodetime=1&source=209678993";
+            PostHttpItem.Postdata = $"text={message}&uid={fans.uid}&extensions={{\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}}&is_encoded=0&decodetime=1&source=209678993";
             HttpResult result = HttpHelper.GetHtml(PostHttpItem);
             var code = result.Html.ToWeiBoJsonResult<object>();
             //判断是否发送失败
             if (code.error_code > 0)
             {
                 PrintMsg(PrintType.error, "方法:SendMessage 出错" + code.error);
+            }
+            else
+            {
+                this.NumberRuns++;
+                this.TodaySendMessageCount++;
+                this.LastSendMessageTime = DateTime.Now;
+                this.LastSendMessageUser = fans;
             }
         }
 
@@ -562,7 +769,9 @@ namespace WeiBoGiveNotice
 
         private void QrcodeImageThread()
         {
+
             QrcodeImageSuccess = false;
+            var GetHttpItem = CreateHttpItem();
             GetHttpItem.Method = "GET";
             while (!QrcodeImageSuccess)
             {
@@ -582,7 +791,7 @@ namespace WeiBoGiveNotice
                             {
                                 imageUrl = "http:" + imageUrl;
                             }
-                            QrCodeImageChange(imageUrl);
+                            QrImageUrl = imageUrl;
                         }
                         var startTime = DateTime.Now;
                         //超时后重新获取新的二维码
@@ -618,12 +827,9 @@ namespace WeiBoGiveNotice
                                     PrintMsg(PrintType.info, "QrcodeImageThread_SSOLoginApiRes_登陆成功!");
 
                                     //登陆成功
-                                    WeiBoUser = new WeiBoUser();
-                                    WeiBoUser.uid = SSOLoginApiRes.uid;
+                                    this.uid = SSOLoginApiRes.uid;
                                     //初始化用户信息
                                     InitWeiBoUser();
-                                    //设置二维码图片区显示用户头像
-                                    QrCodeImageChange(WeiBoUser.avatar_large);
 
                                     //扫码登陆成功
                                     QrcodeImageSuccess = true;

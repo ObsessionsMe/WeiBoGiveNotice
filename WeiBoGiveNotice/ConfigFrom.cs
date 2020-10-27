@@ -17,6 +17,7 @@ namespace WeiBoGiveNotice
         public ConfigFrom(WeBoUserClient weBoUserClient)
         {
             InitializeComponent();
+            this.weBoUserClient = weBoUserClient;
         }
         private void ConfigFrom_Load(object sender, EventArgs e)
         {
