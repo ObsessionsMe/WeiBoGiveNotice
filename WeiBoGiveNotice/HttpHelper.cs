@@ -43,42 +43,42 @@ public class HttpHelper
     {
         //返回参数
         HttpResult result = new HttpResult();
-        try
-        {
+        //try
+        //{
             //准备参数
             SetRequest(item);
-        }
-        catch (Exception ex)
-        {
-            //配置参数时出错
-            return new HttpResult() { Cookie = string.Empty, Header = null, Html = ex.Message, StatusDescription = "配置参数时出错：" + ex.Message };
-        }
-        try
-        {
+        //}
+        //catch (Exception ex)
+        //{
+        //    //配置参数时出错
+        //    return new HttpResult() { Cookie = string.Empty, Header = null, Html = ex.Message, StatusDescription = "配置参数时出错：" + ex.Message };
+        //}
+        //try
+        //{
             //请求数据
             using (response = (HttpWebResponse)request.GetResponse())
             {
                 GetData(item, result);
             }
-        }
-        catch (WebException ex)
-        {
-            if (ex.Response != null)
-            {
-                using (response = (HttpWebResponse)ex.Response)
-                {
-                    GetData(item, result);
-                }
-            }
-            else
-            {
-                result.Html = ex.Message;
-            }
-        }
-        catch (Exception ex)
-        {
-            result.Html = ex.Message;
-        }
+        //}
+        //catch (WebException ex)
+        //{
+        //    if (ex.Response != null)
+        //    {
+        //        using (response = (HttpWebResponse)ex.Response)
+        //        {
+        //            GetData(item, result);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        result.Html = ex.Message;
+        //    }
+        //}
+        //catch (Exception ex)
+        //{
+        //    result.Html = ex.Message;
+        //}
         if (item.IsToLower) result.Html = result.Html.ToLower();
         return result;
     }

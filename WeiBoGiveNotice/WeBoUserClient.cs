@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,10 @@ namespace WeiBoGiveNotice
 
         #region 委托属性
 
+        /// <summary>
+        /// 全局异常通知
+        /// </summary>
+        public ValueChange<Exception> ErrorMessagNotice { get; set; }
 
         /// <summary>
         /// 二维码获取与变更回调方法
@@ -241,7 +246,8 @@ namespace WeiBoGiveNotice
         public int OldFansCall_End { get; set; }
         public int moreOffInterTime_begin { get; set; }
         public int moreOffInterTime_end { get; set; }
-
+        //已发送列表
+        public List<Fans> SentsMessageList { get; set; }      
         #endregion
 
         #region 私有属性
@@ -331,7 +337,7 @@ namespace WeiBoGiveNotice
         /// <param name="printType"></param>
         /// <param name="message"></param>
         /// <param name="exception"></param>
-        private void PrintMsg(PrintType printType, string message, Exception exception = null)
+        public void PrintMsg(PrintType printType, string message, Exception exception = null)
         {
             switch (printType)
             {
@@ -340,6 +346,10 @@ namespace WeiBoGiveNotice
                     break;
                 case PrintType.error:
                     log.Error(message, exception);
+                    if (ErrorMessagNotice != null)
+                    {
+                        ErrorMessagNotice(exception);
+                    }
                     break;
                 default:
                     break;
@@ -511,13 +521,20 @@ namespace WeiBoGiveNotice
 
             //解析粉丝列表
             Fans fans = null;
-            foreach (Match match in fansList)
+            if (fansList.Count > 0)
             {
-                fans = new Fans();
-                fans.uid = match.Groups[1].Value;
-                fans.nick = match.Groups[2].Value;
-                fans.image = match.Groups[3].Value;
-                Res.Add(fans);
+                foreach (Match match in fansList)
+                {
+                    fans = new Fans();
+                    fans.uid = match.Groups[1].Value;
+                    fans.nick = match.Groups[2].Value;
+                    fans.image = match.Groups[3].Value;
+                    Res.Add(fans);
+                }
+            }
+            else
+            {
+                PrintMsg(PrintType.error, $"SearchFansLv1 查询失败 SearchFansPageHttpResult:{JsonConvert.SerializeObject(SearchFansPageHttpResult)}!");
             }
 
             PrintMsg(PrintType.info, $"SearchFansLv1 查询成功 pageNum:{pageNum}!");
@@ -545,13 +562,15 @@ namespace WeiBoGiveNotice
                     valueChange(maxUserCount);
                 }
                 var sentFans = new List<Fans>();
+                SentsMessageList = new List<Fans>();
                 int sentFansNum = 0;
                 //判断是否继续发送
                 while (IsSendMessageNewFansRun)
                 {
                     //1从第一页的粉丝列表开始找哪些是新粉丝,依次类推
                     if (LatestFans == null)
-                    {
+                    { 
+                        IsSendMessageNewFansRun = false;
                         return;
                     }
                     int pageNum = 0;
@@ -566,6 +585,7 @@ namespace WeiBoGiveNotice
                         fansList = SearchFnas(pageNum);
                         if (fansList.Count == 0)
                         {
+                            IsSendMessageNewFansRun = false;
                             return;
                         }
                         //找第一页的粉丝
@@ -590,10 +610,15 @@ namespace WeiBoGiveNotice
                                     break;
                                 }
                                 //SendMessage(fansList[i], message);
-                                foreach (var item in message)
+                                if (!SentsMessageList.Contains(fansList[i]))
                                 {
-                                    SendMessage(fansList[i], item);
-                                    Thread.Sleep(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));//发多个消息的间隔时间
+                                    foreach (var item in message)
+                                    {
+                                        SendMessage(fansList[i], item.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", ""));
+                                        Thread.Sleep(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));//发多个消息的间隔时间
+                                    }
+                                    SentsMessageList.Add(fansList[i]);
+                                    PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息: " + fansList[i].nick + " 睡眠毫秒数为:" + RandomNumber(OldFansCall_Begin, OldFansCall_End));
                                 }
                                 sentFansNum++;
                                 if (valueChange != null)
@@ -605,7 +630,6 @@ namespace WeiBoGiveNotice
                                     //达到打招呼上线后，退出循环
                                     IsSendMessageNewFansRun = false;
                                 }
-                                Thread.Sleep(RandomNumber(NewFansCall_Begin, NewFansCall_End));
                             }
                             //2如果找到上次最后一个粉丝就停止循环
                             isExistlastFans = fansList.SingleOrDefault(x => x.uid == LatestFans[0].uid) != null ? false : true;
@@ -618,7 +642,8 @@ namespace WeiBoGiveNotice
             }
             catch (Exception ex)
             {
-                PrintMsg(PrintType.info, "方法:SendMeesageToNewFans: 正在给新粉丝发消息异常" + ex.ToString());
+                IsSendMessageNewFansRun = false;
+                PrintMsg(PrintType.error, "方法:SendMeesageToNewFans: 正在给新粉丝发消息异常", ex);
             }
         }
 
@@ -627,10 +652,14 @@ namespace WeiBoGiveNotice
         {
             var GetHttpItem = CreateHttpItem();
             GetHttpItem.URL = string.Format(isExistFansPage, nick, WeiBoUser.uid);
-            var httpResult = HttpHelper.GetHtml(GetHttpItem);
-            var reg = new Regex("共搜索到(\\d+)个关于");
-            PrintMsg(PrintType.info, "方法:isExistFans: 解析粉丝是否关注Html，返回的Html" + httpResult.Html);
-            Match mc = reg.Match(httpResult.Html);
+            Match mc = Match.Empty;
+            while (string.IsNullOrEmpty(mc.Value))
+            {
+                var httpResult = HttpHelper.GetHtml(GetHttpItem);
+                var reg = new Regex("共搜索到(\\d+)个关于");
+                mc = reg.Match(httpResult.Html);
+                Thread.Sleep(RandomNumber(3, 7));
+            }
             return int.Parse(mc.Groups[1].Value) > 0 ? true : false;
         }
 
@@ -647,55 +676,68 @@ namespace WeiBoGiveNotice
 
         private void SendMeesageToOldFun(string message, int maxUserCount, ValueChange<int> valueChange)
         {
-            //判断是否继续发送
-            //判断是否继续发送
-            var fansList = new List<Fans>();
-            int sentCount = 0;
-            int pageNum = 1;
-            IsSendMeesageToOldFansRun = true;
-            if (valueChange != null)
+            try
             {
-                valueChange(maxUserCount);
-            }
-            while (IsSendMeesageToOldFansRun)
-            {
-                fansList = SearchFnas(pageNum);
-                pageNum++;
-                if (fansList.Count == 0)
+                //判断是否继续发送
+                //判断是否继续发送
+                var fansList = new List<Fans>();
+                int sentCount = 0;
+                int pageNum = 1;
+                IsSendMeesageToOldFansRun = true;
+                SentsMessageList = new List<Fans>();
+                if (valueChange != null)
                 {
-                    IsSendMeesageToOldFansRun = false;
-                    return;
+                    valueChange(maxUserCount);
                 }
-                foreach (var item in fansList)
+                while (IsSendMeesageToOldFansRun)
                 {
-                    sentCount++;
-                    SendMessage(item, message);
-                    if (valueChange != null)
-                    {
-                        valueChange(maxUserCount - sentCount);
-                    }
-                    if (sentCount == 1)
-                    {
-                        if (OldFansSendMessageStartUserChange != null)
-                        {
-                            OldFansSendMessageStartUserChange(item);
-                        }
-                    }
-                    PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息" + item.nick);
-                    Thread.Sleep(RandomNumber(OldFansCall_Begin, OldFansCall_End));
-                    PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息，睡眠毫秒数为：" + RandomNumber());
-                    if (sentCount >= maxUserCount)
+                    fansList = SearchFnas(pageNum);
+                    pageNum++;
+                    if (fansList.Count == 0)
                     {
                         IsSendMeesageToOldFansRun = false;
                         return;
                     }
-                    else if (!IsSendMeesageToOldFansRun)
+                    foreach (var item in fansList)
                     {
-                        break;
+                        sentCount++;
+                        if (!SentsMessageList.Contains(item))
+                        {
+                            SendMessage(item, message);
+                            //将已发送的粉丝存储答已发送列表中；避免重复发送
+                            SentsMessageList.Add(item);
+                        }
+                        if (valueChange != null)
+                        {
+                            valueChange(maxUserCount - sentCount);
+                        }
+                        if (sentCount == 1)
+                        {
+                            if (OldFansSendMessageStartUserChange != null)
+                            {
+                                OldFansSendMessageStartUserChange(item);
+                            }
+                        }
+                        PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息: " + item.nick + " 睡眠毫秒数为:" + RandomNumber(OldFansCall_Begin, OldFansCall_End));
+                        Thread.Sleep(RandomNumber(OldFansCall_Begin, OldFansCall_End));
+                        if (sentCount >= maxUserCount)
+                        {
+                            IsSendMeesageToOldFansRun = false;
+                            return;
+                        }
+                        else if (!IsSendMeesageToOldFansRun)
+                        {
+                            break;
+                        }
                     }
+                    Thread.Sleep(RandomNumber(OldRefresh_Begin, OldRefresh_End));
+                    PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 刷新粉丝时间，睡眠毫秒数为：" + RandomNumber(OldRefresh_Begin, OldRefresh_End));
                 }
-                Thread.Sleep(RandomNumber(OldRefresh_Begin, OldRefresh_End));
-                PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 刷新粉丝时间，睡眠毫秒数为：" + RandomNumber(10, 20));
+            }
+            catch (Exception ex)
+            {
+                IsSendMeesageToOldFansRun = false;
+                PrintMsg(PrintType.error, "方法:SendMeesageToOldFun异常：", ex);
             }
         }
 
@@ -731,11 +773,12 @@ namespace WeiBoGiveNotice
             message = System.Web.HttpUtility.UrlEncode(message);
             PostHttpItem.Postdata = $"text={message}&uid={fans.uid}&extensions={{\"clientid\":\"ioum121csoxafeztq1x6wymifkx37z\"}}&is_encoded=0&decodetime=1&source=209678993";
             HttpResult result = HttpHelper.GetHtml(PostHttpItem);
+            PrintMsg(PrintType.info, "方法:SendMessage 出错:" + JsonConvert.SerializeObject(result));
             var code = result.Html.ToWeiBoJsonResult<object>();
             //判断是否发送失败
             if (code.error_code > 0)
             {
-                PrintMsg(PrintType.error, "方法:SendMessage 出错" + code.error);
+                PrintMsg(PrintType.info, "方法:SendMessage 出错" +code.error);
             }
             else
             {
@@ -894,6 +937,7 @@ namespace WeiBoGiveNotice
             OldFansCall_End = int.Parse(ConfigurationManager.AppSettings["OldFansCall_End"]);
             moreOffInterTime_begin = int.Parse(ConfigurationManager.AppSettings["moreOffInterTime_begin"]);
             moreOffInterTime_end = int.Parse(ConfigurationManager.AppSettings["moreOffInterTime_end"]);
+            PrintMsg(PrintType.info, "SetDefalutConfig 初始化配置完成!");
         }
     }
 

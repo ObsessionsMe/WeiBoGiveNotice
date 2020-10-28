@@ -37,6 +37,7 @@ namespace WeiBoGiveNotice
                 #region 注册微博用户客户端
 
                 weBoUserClient = new WeBoUserClient();
+                weBoUserClient.ErrorMessagNotice = delegate (Exception ex) { MessageBox.Show($"程序运行异常,请检查网络是否正常!异常信息:{ex.Message}", "错误提示", MessageBoxButtons.OK); };
                 weBoUserClient.QrCodeImageChange = delegate (string imageUrl)
                 {
                     userPhoto.Invoke(new MethodInvoker(delegate () { userPhoto.Load(imageUrl); }));
@@ -72,6 +73,7 @@ namespace WeiBoGiveNotice
 
                 //默认配置赋值，从配置中读取
                 weBoUserClient.SetDefalutConfig();
+
             }
             catch (Exception ex)
             {
@@ -85,7 +87,7 @@ namespace WeiBoGiveNotice
         {
             if (!weBoUserClient.IsSendMeesageToOldFansRun)
             {
-                if (string.IsNullOrEmpty(officalToOld.Text))
+                if (string.IsNullOrEmpty(officalToOld.Text.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "")))
                 {
                     MessageBox.Show("文案不能为空");
                     return;
@@ -109,6 +111,11 @@ namespace WeiBoGiveNotice
             else
             {
                 weBoUserClient.IsSendMeesageToOldFansRun = false;
+                //打印已发送完消息的粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageList)
+                {
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                }
             }
         }
 
@@ -141,6 +148,11 @@ namespace WeiBoGiveNotice
                     MessageBox.Show("向前打招呼数量必须大于0");
                     return;
                 }
+                if (CallNewFansNums > 9999)
+                {
+                    MessageBox.Show("向前打招呼数量必须小于9999");
+                    return;
+                }
                 List<string> officicals = officical.Text.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None).ToList();
                 officicals = officicals.Where(s => !string.IsNullOrEmpty(s)).ToList();
                 weBoUserClient.ListenNewFans(officicals, CallNewFansNums, delegate (int value)
@@ -151,6 +163,11 @@ namespace WeiBoGiveNotice
             else
             {
                 weBoUserClient.IsSendMessageNewFansRun = false;
+                //打印已发送完消息的粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageList)
+                {
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                }
             }
         }
 

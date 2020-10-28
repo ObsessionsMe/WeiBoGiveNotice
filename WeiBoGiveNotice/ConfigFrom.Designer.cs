@@ -53,21 +53,26 @@
             this.OldFansCall_End = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.moreOffInterTime_begin = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.moreOffInterTime_end = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
+            this.moreOffInterTime_end = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.moreOffInterTime_begin = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label16);
             this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.moreOffInterTime_end);
             this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.NewFansCall_End);
+            this.groupBox1.Controls.Add(this.moreOffInterTime_begin);
             this.groupBox1.Controls.Add(this.NewFansCall_Begin);
+            this.groupBox1.Controls.Add(this.label10);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label3);
@@ -274,11 +279,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label16);
-            this.groupBox2.Controls.Add(this.moreOffInterTime_end);
-            this.groupBox2.Controls.Add(this.label12);
-            this.groupBox2.Controls.Add(this.moreOffInterTime_begin);
-            this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.label17);
             this.groupBox2.Controls.Add(this.OldFansCall_End);
             this.groupBox2.Controls.Add(this.label15);
@@ -297,6 +297,38 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "老粉丝";
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(326, 130);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(21, 14);
+            this.label16.TabIndex = 18;
+            this.label16.Text = "秒";
+            // 
+            // moreOffInterTime_end
+            // 
+            this.moreOffInterTime_end.Location = new System.Drawing.Point(260, 127);
+            this.moreOffInterTime_end.Name = "moreOffInterTime_end";
+            this.moreOffInterTime_end.Size = new System.Drawing.Size(60, 23);
+            this.moreOffInterTime_end.TabIndex = 17;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(219, 130);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(35, 14);
+            this.label12.TabIndex = 16;
+            this.label12.Text = "秒—";
+            // 
+            // moreOffInterTime_begin
+            // 
+            this.moreOffInterTime_begin.Location = new System.Drawing.Point(160, 127);
+            this.moreOffInterTime_begin.Name = "moreOffInterTime_begin";
+            this.moreOffInterTime_begin.Size = new System.Drawing.Size(52, 23);
+            this.moreOffInterTime_begin.TabIndex = 15;
+            // 
             // label10
             // 
             this.label10.AutoSize = true;
@@ -305,38 +337,6 @@
             this.label10.Size = new System.Drawing.Size(147, 14);
             this.label10.TabIndex = 14;
             this.label10.Text = "打招呼多文案间隔时间";
-            // 
-            // moreOffInterTime_begin
-            // 
-            this.moreOffInterTime_begin.Location = new System.Drawing.Point(160, 121);
-            this.moreOffInterTime_begin.Name = "moreOffInterTime_begin";
-            this.moreOffInterTime_begin.Size = new System.Drawing.Size(52, 23);
-            this.moreOffInterTime_begin.TabIndex = 15;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(218, 124);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(35, 14);
-            this.label12.TabIndex = 16;
-            this.label12.Text = "秒—";
-            // 
-            // moreOffInterTime_end
-            // 
-            this.moreOffInterTime_end.Location = new System.Drawing.Point(259, 120);
-            this.moreOffInterTime_end.Name = "moreOffInterTime_end";
-            this.moreOffInterTime_end.Size = new System.Drawing.Size(60, 23);
-            this.moreOffInterTime_end.TabIndex = 17;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(325, 123);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(21, 14);
-            this.label16.TabIndex = 18;
-            this.label16.Text = "秒";
             // 
             // ConfigFrom
             // 
