@@ -69,6 +69,9 @@ namespace WeiBoGiveNotice
                 #endregion
 
                 weBoUserClient.StartQrcodeLogin();
+
+                //默认配置赋值，从配置中读取
+                weBoUserClient.SetDefalutConfig();
             }
             catch (Exception ex)
             {
@@ -82,7 +85,7 @@ namespace WeiBoGiveNotice
         {
             if (!weBoUserClient.IsSendMeesageToOldFansRun)
             {
-                if (string.IsNullOrEmpty(officical.Text))
+                if (string.IsNullOrEmpty(officalToOld.Text))
                 {
                     MessageBox.Show("文案不能为空");
                     return;
@@ -98,7 +101,7 @@ namespace WeiBoGiveNotice
                     MessageBox.Show("向前打招呼数量必须大于0");
                     return;
                 }
-                weBoUserClient.SendMeesageToOldFans(officical.Text, CallOldFansNums, delegate (int value)
+                weBoUserClient.SendMeesageToOldFans(officalToOld.Text, CallOldFansNums, delegate (int value)
                 {
                     SetControlText(CallCount, value.ToString());
                 });
@@ -138,7 +141,9 @@ namespace WeiBoGiveNotice
                     MessageBox.Show("向前打招呼数量必须大于0");
                     return;
                 }
-                weBoUserClient.ListenNewFans(officical.Text, CallNewFansNums, delegate (int value)
+                List<string> officicals = officical.Text.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None).ToList();
+                officicals = officicals.Where(s => !string.IsNullOrEmpty(s)).ToList();
+                weBoUserClient.ListenNewFans(officicals, CallNewFansNums, delegate (int value)
                 {
                     SetControlText(label34, value.ToString());
                 });

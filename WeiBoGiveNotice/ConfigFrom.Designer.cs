@@ -53,6 +53,11 @@
             this.OldFansCall_End = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.moreOffInterTime_begin = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.moreOffInterTime_end = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -72,7 +77,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(12, 28);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(360, 144);
+            this.groupBox1.Size = new System.Drawing.Size(360, 180);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "新粉丝";
@@ -169,7 +174,7 @@
             // 
             // saveConfig
             // 
-            this.saveConfig.Location = new System.Drawing.Point(320, 194);
+            this.saveConfig.Location = new System.Drawing.Point(314, 235);
             this.saveConfig.Name = "saveConfig";
             this.saveConfig.Size = new System.Drawing.Size(112, 34);
             this.saveConfig.TabIndex = 6;
@@ -269,6 +274,11 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label16);
+            this.groupBox2.Controls.Add(this.moreOffInterTime_end);
+            this.groupBox2.Controls.Add(this.label12);
+            this.groupBox2.Controls.Add(this.moreOffInterTime_begin);
+            this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.label17);
             this.groupBox2.Controls.Add(this.OldFansCall_End);
             this.groupBox2.Controls.Add(this.label15);
@@ -282,16 +292,57 @@
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Location = new System.Drawing.Point(378, 28);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(352, 144);
+            this.groupBox2.Size = new System.Drawing.Size(352, 180);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "老粉丝";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 130);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(147, 14);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "打招呼多文案间隔时间";
+            // 
+            // moreOffInterTime_begin
+            // 
+            this.moreOffInterTime_begin.Location = new System.Drawing.Point(160, 121);
+            this.moreOffInterTime_begin.Name = "moreOffInterTime_begin";
+            this.moreOffInterTime_begin.Size = new System.Drawing.Size(52, 23);
+            this.moreOffInterTime_begin.TabIndex = 15;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(218, 124);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(35, 14);
+            this.label12.TabIndex = 16;
+            this.label12.Text = "秒—";
+            // 
+            // moreOffInterTime_end
+            // 
+            this.moreOffInterTime_end.Location = new System.Drawing.Point(259, 120);
+            this.moreOffInterTime_end.Name = "moreOffInterTime_end";
+            this.moreOffInterTime_end.Size = new System.Drawing.Size(60, 23);
+            this.moreOffInterTime_end.TabIndex = 17;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(325, 123);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(21, 14);
+            this.label16.TabIndex = 18;
+            this.label16.Text = "秒";
             // 
             // ConfigFrom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(742, 242);
+            this.ClientSize = new System.Drawing.Size(742, 296);
             this.Controls.Add(this.saveConfig);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -334,5 +385,10 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox NewFansCall_End;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox moreOffInterTime_end;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox moreOffInterTime_begin;
+        private System.Windows.Forms.Label label10;
     }
 }

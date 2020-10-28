@@ -28,9 +28,10 @@ namespace WeiBoGiveNotice
             NewFansCall_End.Text = ConfigurationManager.AppSettings["NewFansCall_End"];
             OldRefresh_Begin.Text = ConfigurationManager.AppSettings["OldRefresh_Begin"];
             OldRefresh_End.Text = ConfigurationManager.AppSettings["OldRefresh_End"];
-            OldRefresh_Begin.Text = ConfigurationManager.AppSettings["OldRefresh_Begin"];
+            OldFansCall_Begin.Text = ConfigurationManager.AppSettings["OldFansCall_Begin"];
             OldFansCall_End.Text = ConfigurationManager.AppSettings["OldFansCall_End"];
-
+            moreOffInterTime_begin.Text = ConfigurationManager.AppSettings["moreOffInterTime_begin"];
+            moreOffInterTime_end.Text = ConfigurationManager.AppSettings["moreOffInterTime_end"];
         }
 
         //保存时间相关的配置信息
@@ -46,6 +47,8 @@ namespace WeiBoGiveNotice
             config.AppSettings.Settings["OldRefresh_End"].Value = OldRefresh_End.Text;
             config.AppSettings.Settings["OldFansCall_Begin"].Value = OldFansCall_Begin.Text;
             config.AppSettings.Settings["OldFansCall_End"].Value = OldFansCall_End.Text;
+            config.AppSettings.Settings["moreOffInterTime_begin"].Value = moreOffInterTime_begin.Text;
+            config.AppSettings.Settings["moreOffInterTime_end"].Value = moreOffInterTime_end.Text;
             config.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection("appSettings");
             weBoUserClient.NewFansRefresh_Begin = int.Parse(NewFansRefresh_Begin.Text);
@@ -56,6 +59,8 @@ namespace WeiBoGiveNotice
             weBoUserClient.OldRefresh_End = int.Parse(OldRefresh_End.Text);
             weBoUserClient.OldFansCall_Begin = int.Parse(OldFansCall_Begin.Text);
             weBoUserClient.OldFansCall_End = int.Parse(OldFansCall_End.Text);
+            weBoUserClient.moreOffInterTime_begin = int.Parse(moreOffInterTime_begin.Text);
+            weBoUserClient.moreOffInterTime_end = int.Parse(moreOffInterTime_end.Text);
             this.Close();
         }
     }

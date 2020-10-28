@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -238,6 +239,9 @@ namespace WeiBoGiveNotice
         public int OldRefresh_End { get; set; }
         public int OldFansCall_Begin { get; set; }
         public int OldFansCall_End { get; set; }
+        public int moreOffInterTime_begin { get; set; }
+        public int moreOffInterTime_end { get; set; }
+
         #endregion
 
         #region 私有属性
@@ -312,6 +316,7 @@ namespace WeiBoGiveNotice
         /// </summary>
         private const string SendMessageApi = "https://api.weibo.com/webim/2/direct_messages/new.json";
 
+        private const string ChangeVersionApi = "https://weibo.com/ajax/changeversion?status={0}";
 
         /// <summary>
         /// 用户标识cookie
@@ -435,6 +440,13 @@ namespace WeiBoGiveNotice
             GetHttpItem.URL = string.Format(SearchFansApiLv1, uid, 1);
             var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
 
+            if (string.IsNullOrEmpty(SearchFansPageHttpResult.Html))
+            {
+                string errorMsg = "账号异常，请登录微博PC端解除!";
+                PrintMsg(PrintType.error, errorMsg);
+                throw new Exception(errorMsg);
+            }
+
             SetWeiBoUser(SearchFansPageHttpResult.Html);
 
             switch (VersionLevel)
@@ -517,17 +529,21 @@ namespace WeiBoGiveNotice
         /// </summary>
         /// <param name="message">发送的消息内容</param>
         /// <param name="maxUserCount">最大用户数量</param>
-        public void ListenNewFans(string message, int maxUserCount, ValueChange<int> valueChange)
+        public void ListenNewFans(List<string> message, int maxUserCount, ValueChange<int> valueChange)
         {
             Thread thread = new Thread(() => SendMeesageToNewFans(message, maxUserCount, valueChange));
             thread.Start();
         }
 
-        private void SendMeesageToNewFans(string message, int maxUserCount, ValueChange<int> valueChange)
+        private void SendMeesageToNewFans(List<string> message, int maxUserCount, ValueChange<int> valueChange)
         {
             try
             {
                 IsSendMessageNewFansRun = true;
+                if (valueChange != null)
+                {
+                    valueChange(maxUserCount);
+                }
                 var sentFans = new List<Fans>();
                 int sentFansNum = 0;
                 //判断是否继续发送
@@ -556,6 +572,7 @@ namespace WeiBoGiveNotice
                         while (!isExistFans(LatestFans[0].nick) && pageNum == 1)
                         {
                             LatestFans.RemoveAt(0);
+                            PrintMsg(PrintType.info, "方法:SendMeesageToNewFans:移除的粉丝" + LatestFans[0].nick);
                             if (fansList.Count == 0)
                             {
                                 LatestFans = fansList;
@@ -568,11 +585,16 @@ namespace WeiBoGiveNotice
                             //发消息
                             for (int i = 0; i < fansList.Count; i++)
                             {
-                                if (fansList[i].uid == LatestFans[0].uid|| !IsSendMessageNewFansRun)
+                                if (fansList[i].uid == LatestFans[0].uid || !IsSendMessageNewFansRun)
                                 {
                                     break;
                                 }
-                                SendMessage(fansList[i], message);
+                                //SendMessage(fansList[i], message);
+                                foreach (var item in message)
+                                {
+                                    SendMessage(fansList[i], item);
+                                    Thread.Sleep(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));//发多个消息的间隔时间
+                                }
                                 sentFansNum++;
                                 if (valueChange != null)
                                 {
@@ -583,20 +605,20 @@ namespace WeiBoGiveNotice
                                     //达到打招呼上线后，退出循环
                                     IsSendMessageNewFansRun = false;
                                 }
-                                Thread.Sleep(5000);
+                                Thread.Sleep(RandomNumber(NewFansCall_Begin, NewFansCall_End));
                             }
                             //2如果找到上次最后一个粉丝就停止循环
                             isExistlastFans = fansList.SingleOrDefault(x => x.uid == LatestFans[0].uid) != null ? false : true;
                         }
                         sentFans.AddRange(fansList);
-                        Thread.Sleep(5000);
+                        Thread.Sleep(RandomNumber(NewFansRefresh_Begin, NewFansRefresh_End));
                     }
                     LatestFans = sentFans;
                 }
             }
             catch (Exception ex)
             {
-                PrintMsg(PrintType.info, "方法:ListenNewFans: 正在给新粉丝发消息" + ex.ToString());
+                PrintMsg(PrintType.info, "方法:SendMeesageToNewFans: 正在给新粉丝发消息异常" + ex.ToString());
             }
         }
 
@@ -607,6 +629,7 @@ namespace WeiBoGiveNotice
             GetHttpItem.URL = string.Format(isExistFansPage, nick, WeiBoUser.uid);
             var httpResult = HttpHelper.GetHtml(GetHttpItem);
             var reg = new Regex("共搜索到(\\d+)个关于");
+            PrintMsg(PrintType.info, "方法:isExistFans: 解析粉丝是否关注Html，返回的Html" + httpResult.Html);
             Match mc = reg.Match(httpResult.Html);
             return int.Parse(mc.Groups[1].Value) > 0 ? true : false;
         }
@@ -616,7 +639,7 @@ namespace WeiBoGiveNotice
         /// </summary>
         /// <param name="message"></param>
         /// <param name="maxUserCount"></param>
-        public void SendMeesageToOldFans(string message, int maxUserCount,ValueChange<int> valueChange)
+        public void SendMeesageToOldFans(string message, int maxUserCount, ValueChange<int> valueChange)
         {
             Thread thread = new Thread(() => SendMeesageToOldFun(message, maxUserCount, valueChange));
             thread.Start();
@@ -630,6 +653,10 @@ namespace WeiBoGiveNotice
             int sentCount = 0;
             int pageNum = 1;
             IsSendMeesageToOldFansRun = true;
+            if (valueChange != null)
+            {
+                valueChange(maxUserCount);
+            }
             while (IsSendMeesageToOldFansRun)
             {
                 fansList = SearchFnas(pageNum);
@@ -649,12 +676,13 @@ namespace WeiBoGiveNotice
                     }
                     if (sentCount == 1)
                     {
-                        if (OldFansSendMessageStartUserChange != null) {
+                        if (OldFansSendMessageStartUserChange != null)
+                        {
                             OldFansSendMessageStartUserChange(item);
                         }
                     }
                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息" + item.nick);
-                    Thread.Sleep(RandomNumber());
+                    Thread.Sleep(RandomNumber(OldFansCall_Begin, OldFansCall_End));
                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息，睡眠毫秒数为：" + RandomNumber());
                     if (sentCount >= maxUserCount)
                     {
@@ -666,7 +694,7 @@ namespace WeiBoGiveNotice
                         break;
                     }
                 }
-                Thread.Sleep(RandomNumber(10, 20));
+                Thread.Sleep(RandomNumber(OldRefresh_Begin, OldRefresh_End));
                 PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 刷新粉丝时间，睡眠毫秒数为：" + RandomNumber(10, 20));
             }
         }
@@ -828,6 +856,12 @@ namespace WeiBoGiveNotice
 
                                     //登陆成功
                                     this.uid = SSOLoginApiRes.uid;
+
+                                    //设置使用接口的版本
+                                    GetHttpItem = CreateHttpItem();
+                                    GetHttpItem.URL = string.Format(ChangeVersionApi, (int)VersionLevel.Lv1);
+                                    var ChangeVersionApiRes = HttpHelper.GetHtml(GetHttpItem);
+
                                     //初始化用户信息
                                     InitWeiBoUser();
 
@@ -847,7 +881,20 @@ namespace WeiBoGiveNotice
             }
         }
 
-
+        public void SetDefalutConfig()
+        {
+            //赋值
+            NewFansRefresh_Begin = int.Parse(ConfigurationManager.AppSettings["NewFansRefresh_Begin"]);
+            NewFansRefresh_End = int.Parse(ConfigurationManager.AppSettings["NewFansRefresh_End"]);
+            NewFansCall_Begin = int.Parse(ConfigurationManager.AppSettings["NewFansCall_Begin"]);
+            NewFansCall_End = int.Parse(ConfigurationManager.AppSettings["NewFansCall_End"]);
+            OldRefresh_Begin = int.Parse(ConfigurationManager.AppSettings["OldRefresh_Begin"]);
+            OldRefresh_End = int.Parse(ConfigurationManager.AppSettings["OldRefresh_End"]);
+            OldFansCall_Begin = int.Parse(ConfigurationManager.AppSettings["OldFansCall_Begin"]);
+            OldFansCall_End = int.Parse(ConfigurationManager.AppSettings["OldFansCall_End"]);
+            moreOffInterTime_begin = int.Parse(ConfigurationManager.AppSettings["moreOffInterTime_begin"]);
+            moreOffInterTime_end = int.Parse(ConfigurationManager.AppSettings["moreOffInterTime_end"]);
+        }
     }
 
     public enum PrintType
@@ -1001,8 +1048,8 @@ namespace WeiBoGiveNotice
     public enum VersionLevel
     {
         None = 0,
-        Lv1 = 1,
-        Lv2 = 2
+        Lv1 = 6,
+        Lv2 = 7
     }
 
     /// <summary>
