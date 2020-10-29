@@ -247,7 +247,7 @@ namespace WeiBoGiveNotice
         public int moreOffInterTime_begin { get; set; }
         public int moreOffInterTime_end { get; set; }
         //已发送列表
-        public List<Fans> SentsMessageList { get; set; }      
+        public List<Fans> SentsMessageList { get; set; }
         #endregion
 
         #region 私有属性
@@ -392,7 +392,7 @@ namespace WeiBoGiveNotice
 
         private HttpItem CreateHttpItem()
         {
-            return new HttpItem() { Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value)) };
+            return new HttpItem() { RequestRetryNumber = 5, Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value)) };
         }
 
         /// <summary>
@@ -573,7 +573,7 @@ namespace WeiBoGiveNotice
                 {
                     //1从第一页的粉丝列表开始找哪些是新粉丝,依次类推
                     if (LatestFans == null)
-                    { 
+                    {
                         IsSendMessageNewFansRun = false;
                         return;
                     }
@@ -781,7 +781,7 @@ namespace WeiBoGiveNotice
             //判断是否发送失败
             if (code.error_code > 0)
             {
-                PrintMsg(PrintType.info, "方法:SendMessage 出错" +code.error);
+                PrintMsg(PrintType.info, "方法:SendMessage 出错" + code.error);
             }
             else
             {

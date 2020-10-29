@@ -43,43 +43,63 @@ public class HttpHelper
     {
         //返回参数
         HttpResult result = new HttpResult();
-        //try
-        //{
-            //准备参数
-            SetRequest(item);
-        //}
-        //catch (Exception ex)
-        //{
-        //    //配置参数时出错
-        //    return new HttpResult() { Cookie = string.Empty, Header = null, Html = ex.Message, StatusDescription = "配置参数时出错：" + ex.Message };
-        //}
-        //try
-        //{
-            //请求数据
-            using (response = (HttpWebResponse)request.GetResponse())
+        bool isSuccess = false;
+        var _RequestRetryNumber = item.RequestRetryNumber;
+        while (!isSuccess)
+        {
+            try
             {
-                GetData(item, result);
+                //准备参数
+                SetRequest(item);
             }
-        //}
-        //catch (WebException ex)
-        //{
-        //    if (ex.Response != null)
-        //    {
-        //        using (response = (HttpWebResponse)ex.Response)
-        //        {
-        //            GetData(item, result);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        result.Html = ex.Message;
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    result.Html = ex.Message;
-        //}
-        if (item.IsToLower) result.Html = result.Html.ToLower();
+            catch (Exception ex)
+            {
+                //配置参数时出错
+                return new HttpResult() { Cookie = string.Empty, Header = null, Html = ex.Message, StatusDescription = "配置参数时出错：" + ex.Message };
+            }
+            try
+            {
+                //请求数据
+                using (response = (HttpWebResponse)request.GetResponse())
+                {
+                    GetData(item, result);
+                }
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response != null)
+                {
+                    using (response = (HttpWebResponse)ex.Response)
+                    {
+                        GetData(item, result);
+                    }
+                }
+                else
+                {
+                    result.Html = ex.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Html = ex.Message;
+            }
+            if (item.IsToLower) result.Html = result.Html.ToLower();
+
+            //如果返回结果成功那么有重试则
+            if(result.StatusCode== HttpStatusCode.OK)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                _RequestRetryNumber--;
+                //重试次数用完还是失败则抛出异常
+                if (item.RequestRetryNumber>0&& _RequestRetryNumber == 0)
+                {
+                    throw new Exception(result.Html);
+                }
+            }
+        }
         return result;
     }
     #endregion
@@ -410,6 +430,7 @@ public class HttpHelper
 /// </summary>
 public class HttpItem
 {
+    
     /// <summary>
     /// 请求URL必须填写
     /// </summary>
@@ -631,7 +652,15 @@ public class HttpItem
         get { return _IfModifiedSince; }
         set { _IfModifiedSince = value; }
     }
-
+    int _RequestRetryNumber = 0;
+    /// <summary>
+    /// 请求重试次数
+    /// </summary>
+    public int RequestRetryNumber
+    {
+        get { return _RequestRetryNumber; }
+        set { _RequestRetryNumber = value; }
+    }
 }
 /// <summary>
 /// Http返回参数类
@@ -706,6 +735,7 @@ public class HttpResult
             return string.Empty;
         }
     }
+
 }
 /// <summary>
 /// 返回类型
