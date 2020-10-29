@@ -176,6 +176,12 @@ namespace WeiBoGiveNotice
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            //打印已发送完消息的粉丝列表
+            foreach (var item in weBoUserClient.SentsMessageList)
+            {
+                weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+            }
+            weBoUserClient.SentsMessageList = new List<Fans>();
             System.Environment.Exit(0);
         }
     }
