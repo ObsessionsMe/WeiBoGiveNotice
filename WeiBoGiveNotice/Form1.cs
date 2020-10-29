@@ -71,9 +71,10 @@ namespace WeiBoGiveNotice
 
                 weBoUserClient.StartQrcodeLogin();
 
-                //默认配置赋值，从配置中读取
+                //默认给页面的配置赋值，数据从配置中读取
                 weBoUserClient.SetDefalutConfig();
 
+                weBoUserClient.SentsMessageList = new List<Fans>();
             }
             catch (Exception ex)
             {
@@ -116,6 +117,7 @@ namespace WeiBoGiveNotice
                 {
                     weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
                 }
+                weBoUserClient.SentsMessageList = new List<Fans>();
             }
         }
 
@@ -168,6 +170,7 @@ namespace WeiBoGiveNotice
                 {
                     weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
                 }
+                weBoUserClient.SentsMessageList = new List<Fans>();
             }
         }
 

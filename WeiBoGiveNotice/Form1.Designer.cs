@@ -40,6 +40,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.officalToOld = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.CallCount = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -55,6 +56,7 @@
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label30 = new System.Windows.Forms.Label();
             this.BeginDown = new System.Windows.Forms.Button();
             this.label36 = new System.Windows.Forms.Label();
             this.officical = new System.Windows.Forms.TextBox();
@@ -78,8 +80,6 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
-            this.officalToOld = new System.Windows.Forms.TextBox();
-            this.label30 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -220,6 +220,15 @@
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "向前打招呼";
+            // 
+            // officalToOld
+            // 
+            this.officalToOld.Location = new System.Drawing.Point(21, 65);
+            this.officalToOld.Multiline = true;
+            this.officalToOld.Name = "officalToOld";
+            this.officalToOld.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.officalToOld.Size = new System.Drawing.Size(319, 137);
+            this.officalToOld.TabIndex = 20;
             // 
             // label9
             // 
@@ -378,6 +387,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "登录用户信息";
             // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.ForeColor = System.Drawing.Color.Red;
+            this.label30.Location = new System.Drawing.Point(399, 237);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(147, 14);
+            this.label30.TabIndex = 20;
+            this.label30.Text = "空两行表示发多个消息";
+            // 
             // BeginDown
             // 
             this.BeginDown.Location = new System.Drawing.Point(556, 229);
@@ -449,7 +468,7 @@
             this.label33.AutoSize = true;
             this.label33.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label33.ForeColor = System.Drawing.Color.Red;
-            this.label33.Location = new System.Drawing.Point(405, 17);
+            this.label33.Location = new System.Drawing.Point(416, 17);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(110, 16);
             this.label33.TabIndex = 14;
@@ -584,25 +603,6 @@
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(0, 14);
             this.label29.TabIndex = 1;
-            // 
-            // officalToOld
-            // 
-            this.officalToOld.Location = new System.Drawing.Point(21, 65);
-            this.officalToOld.Multiline = true;
-            this.officalToOld.Name = "officalToOld";
-            this.officalToOld.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.officalToOld.Size = new System.Drawing.Size(319, 137);
-            this.officalToOld.TabIndex = 20;
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.ForeColor = System.Drawing.Color.Red;
-            this.label30.Location = new System.Drawing.Point(399, 237);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(147, 14);
-            this.label30.TabIndex = 20;
-            this.label30.Text = "空两行表示发多个消息";
             // 
             // Form1
             // 

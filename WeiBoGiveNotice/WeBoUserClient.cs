@@ -515,10 +515,14 @@ namespace WeiBoGiveNotice
             var GetHttpItem = CreateHttpItem();
             GetHttpItem.Method = "GET";
             GetHttpItem.URL = string.Format(SearchFansApiLv1, WeiBoUser.uid, pageNum);
-            var SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
-
+            //xp-修改
+            HttpResult SearchFansPageHttpResult = new HttpResult();
+            while (string.IsNullOrEmpty(SearchFansPageHttpResult.Html))
+            {
+                SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
+                Thread.Sleep(RandomNumber(2, 5));
+            }
             var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
-
             //解析粉丝列表
             Fans fans = null;
             if (fansList.Count > 0)
@@ -535,6 +539,7 @@ namespace WeiBoGiveNotice
             else
             {
                 PrintMsg(PrintType.error, $"SearchFansLv1 查询失败 SearchFansPageHttpResult:{JsonConvert.SerializeObject(SearchFansPageHttpResult)}!");
+
             }
 
             PrintMsg(PrintType.info, $"SearchFansLv1 查询成功 pageNum:{pageNum}!");
@@ -562,7 +567,6 @@ namespace WeiBoGiveNotice
                     valueChange(maxUserCount);
                 }
                 var sentFans = new List<Fans>();
-                SentsMessageList = new List<Fans>();
                 int sentFansNum = 0;
                 //判断是否继续发送
                 while (IsSendMessageNewFansRun)
@@ -614,8 +618,8 @@ namespace WeiBoGiveNotice
                                 {
                                     foreach (var item in message)
                                     {
-                                        SendMessage(fansList[i], item.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", ""));
                                         Thread.Sleep(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));//发多个消息的间隔时间
+                                        SendMessage(fansList[i], item.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", ""));
                                     }
                                     SentsMessageList.Add(fansList[i]);
                                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息: " + fansList[i].nick + " 睡眠毫秒数为:" + RandomNumber(OldFansCall_Begin, OldFansCall_End));
@@ -684,7 +688,6 @@ namespace WeiBoGiveNotice
                 int sentCount = 0;
                 int pageNum = 1;
                 IsSendMeesageToOldFansRun = true;
-                SentsMessageList = new List<Fans>();
                 if (valueChange != null)
                 {
                     valueChange(maxUserCount);
