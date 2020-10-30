@@ -13,16 +13,16 @@ using System.Windows.Forms;
 
 namespace WeiBoGiveNotice
 {
-    public partial class Form1 : Form
+    public partial class MainFrm : Form
     {
-        public Form1()
+        public MainFrm()
         {
             InitializeComponent();
 
         }
 
 
-        private WeBoUserClient weBoUserClient;
+        private WeiBoUserClient weBoUserClient;
 
         private void SetControlText(Control control, string value)
         {
@@ -34,9 +34,19 @@ namespace WeiBoGiveNotice
         {
             try
             {
+                if (!LoginFrm.VerifyCheckCode(MachineCode.GetShortMachineCodeString(), CfgMgr.GetValue("CheckCode")))
+                {
+                    //登陆校验
+                    LoginFrm loginFrm = new LoginFrm();
+                    if (loginFrm.ShowDialog() != DialogResult.OK)
+                    {
+                        this.Close();
+                    };
+                }
+
                 #region 注册微博用户客户端
 
-                weBoUserClient = new WeBoUserClient();
+                weBoUserClient = new WeiBoUserClient();
                 weBoUserClient.ErrorMessagNotice = delegate (Exception ex) { MessageBox.Show($"程序运行异常,请检查网络是否正常!异常信息:{ex.Message}", "错误提示", MessageBoxButtons.OK); };
                 weBoUserClient.QrCodeImageChange = delegate (string imageUrl)
                 {
@@ -124,7 +134,7 @@ namespace WeiBoGiveNotice
         //点击系统配置
         private void setConfig_Click(object sender, EventArgs e)
         {
-            ConfigFrom cf = new ConfigFrom(weBoUserClient);
+            ConfigFrm cf = new ConfigFrm(weBoUserClient);
             cf.ShowDialog();
             //可以执行此处代码
         }
@@ -176,12 +186,15 @@ namespace WeiBoGiveNotice
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //打印已发送完消息的粉丝列表
-            foreach (var item in weBoUserClient.SentsMessageList)
+            if (weBoUserClient != null && weBoUserClient.SentsMessageList.Count > 0)
             {
-                weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                //打印已发送完消息的粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageList)
+                {
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                }
+                weBoUserClient.SentsMessageList = new List<Fans>();
             }
-            weBoUserClient.SentsMessageList = new List<Fans>();
             System.Environment.Exit(0);
         }
     }

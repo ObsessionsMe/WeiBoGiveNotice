@@ -17,9 +17,9 @@ namespace WeiBoGiveNotice
     /// <summary>
     /// 微博用户客户端（一个用户对应一个客户端实例，客户端提供该用户数据的访问入口）
     /// </summary>
-    public class WeBoUserClient
+    public class WeiBoUserClient
     {
-        public WeBoUserClient()
+        public WeiBoUserClient()
         {
             HttpHelper = new HttpHelper();
         }
@@ -506,7 +506,7 @@ namespace WeiBoGiveNotice
             HttpResult SearchFansPageHttpResult = new HttpResult();
             while (!SearchFansPageHttpResult.Html.Contains("粉丝列表"))
             {
-                SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);                
+                SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
                 Thread.Sleep(RandomNumber(2, 5));
             }
             var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");

@@ -11,10 +11,10 @@ using System.Windows.Forms;
 
 namespace WeiBoGiveNotice
 {
-    public partial class ConfigFrom : Form
+    public partial class ConfigFrm : Form
     {
-        private WeBoUserClient weBoUserClient;
-        public ConfigFrom(WeBoUserClient weBoUserClient)
+        private WeiBoUserClient weBoUserClient;
+        public ConfigFrm(WeiBoUserClient weBoUserClient)
         {
             InitializeComponent();
             this.weBoUserClient = weBoUserClient;

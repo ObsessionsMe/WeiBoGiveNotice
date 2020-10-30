@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeiBoGiveNotice", "WeiBoGiveNotice\WeiBoGiveNotice.csproj", "{3EB547B3-C5F7-4F0F-9DDB-4930EA163FCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WBGNKeygen", "WBGNKeygen\WBGNKeygen.csproj", "{9BC275D2-17DA-4853-925E-BCD44F8C22FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3EB547B3-C5F7-4F0F-9DDB-4930EA163FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EB547B3-C5F7-4F0F-9DDB-4930EA163FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EB547B3-C5F7-4F0F-9DDB-4930EA163FCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BC275D2-17DA-4853-925E-BCD44F8C22FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BC275D2-17DA-4853-925E-BCD44F8C22FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BC275D2-17DA-4853-925E-BCD44F8C22FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BC275D2-17DA-4853-925E-BCD44F8C22FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
