@@ -34,6 +34,8 @@ namespace WeiBoGiveNotice
         {
             try
             {
+                userPhoto.SizeMode = PictureBoxSizeMode.StretchImage;
+
                 if (!LoginFrm.VerifyCheckCode(MachineCode.GetShortMachineCodeString(), CfgMgr.GetValue("CheckCode")))
                 {
                     //登陆校验
