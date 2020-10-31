@@ -90,7 +90,7 @@
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(473, 162);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(109, 44);
             this.button1.TabIndex = 0;
@@ -111,9 +111,9 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Font = new System.Drawing.Font("黑体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.groupBox1.Location = new System.Drawing.Point(44, 36);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(848, 161);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
@@ -228,9 +228,9 @@
             this.groupBox2.Controls.Add(this.label18);
             this.groupBox2.Font = new System.Drawing.Font("黑体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.groupBox2.Location = new System.Drawing.Point(44, 224);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox2.Size = new System.Drawing.Size(848, 265);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
@@ -239,7 +239,7 @@
             // officalToOld
             // 
             this.officalToOld.Location = new System.Drawing.Point(28, 81);
-            this.officalToOld.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.officalToOld.Margin = new System.Windows.Forms.Padding(4);
             this.officalToOld.Multiline = true;
             this.officalToOld.Name = "officalToOld";
             this.officalToOld.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -294,7 +294,7 @@
             // CallOldFansNum
             // 
             this.CallOldFansNum.Location = new System.Drawing.Point(617, 108);
-            this.CallOldFansNum.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.CallOldFansNum.Margin = new System.Windows.Forms.Padding(4);
             this.CallOldFansNum.Name = "CallOldFansNum";
             this.CallOldFansNum.Size = new System.Drawing.Size(119, 27);
             this.CallOldFansNum.TabIndex = 9;
@@ -411,9 +411,9 @@
             this.groupBox3.Controls.Add(this.label29);
             this.groupBox3.Font = new System.Drawing.Font("黑体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.groupBox3.Location = new System.Drawing.Point(33, 514);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox3.Size = new System.Drawing.Size(859, 351);
             this.groupBox3.TabIndex = 14;
             this.groupBox3.TabStop = false;
@@ -433,7 +433,7 @@
             // BeginDown
             // 
             this.BeginDown.Location = new System.Drawing.Point(741, 286);
-            this.BeginDown.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BeginDown.Margin = new System.Windows.Forms.Padding(4);
             this.BeginDown.Name = "BeginDown";
             this.BeginDown.Size = new System.Drawing.Size(109, 44);
             this.BeginDown.TabIndex = 19;
@@ -454,7 +454,7 @@
             // officical
             // 
             this.officical.Location = new System.Drawing.Point(373, 89);
-            this.officical.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.officical.Margin = new System.Windows.Forms.Padding(4);
             this.officical.Multiline = true;
             this.officical.Name = "officical";
             this.officical.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -464,7 +464,7 @@
             // setConfig
             // 
             this.setConfig.Location = new System.Drawing.Point(709, 38);
-            this.setConfig.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.setConfig.Margin = new System.Windows.Forms.Padding(4);
             this.setConfig.Name = "setConfig";
             this.setConfig.Size = new System.Drawing.Size(109, 44);
             this.setConfig.TabIndex = 14;
@@ -475,7 +475,7 @@
             // CallNewFansNum
             // 
             this.CallNewFansNum.Location = new System.Drawing.Point(544, 54);
-            this.CallNewFansNum.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.CallNewFansNum.Margin = new System.Windows.Forms.Padding(4);
             this.CallNewFansNum.Name = "CallNewFansNum";
             this.CallNewFansNum.Size = new System.Drawing.Size(119, 27);
             this.CallNewFansNum.TabIndex = 14;
@@ -540,7 +540,7 @@
             // userPhoto
             // 
             this.userPhoto.Location = new System.Drawing.Point(35, 62);
-            this.userPhoto.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.userPhoto.Margin = new System.Windows.Forms.Padding(4);
             this.userPhoto.Name = "userPhoto";
             this.userPhoto.Size = new System.Drawing.Size(313, 251);
             this.userPhoto.TabIndex = 14;
@@ -662,8 +662,7 @@
             // 
             // MainFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(909, 874);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -671,7 +670,7 @@
             this.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "MainFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -340,8 +340,7 @@
             // 
             // ConfigFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(742, 296);
             this.ControlBox = false;
             this.Controls.Add(this.saveConfig);
