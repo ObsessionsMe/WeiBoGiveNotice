@@ -87,7 +87,8 @@ namespace WeiBoGiveNotice
                 //默认给页面的配置赋值，数据从配置中读取
                 weBoUserClient.SetDefalutConfig();
 
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                weBoUserClient.SentsMessageListByNew = new List<Fans>();
+                weBoUserClient.SentsMessageListByOld = new List<Fans>();
             }
             catch (Exception ex)
             {
@@ -126,12 +127,12 @@ namespace WeiBoGiveNotice
             else
             {
                 weBoUserClient.IsSendMeesageToOldFansRun = false;
-                //打印已发送完消息的粉丝列表
-                foreach (var item in weBoUserClient.SentsMessageList)
+                //打印已发送完消息的老粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByOld)
                 {
-                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的老粉粉丝" + item.nick);
                 }
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                weBoUserClient.SentsMessageListByOld = new List<Fans>();
             }
         }
 
@@ -179,25 +180,31 @@ namespace WeiBoGiveNotice
             else
             {
                 weBoUserClient.IsSendMessageNewFansRun = false;
-                //打印已发送完消息的粉丝列表
-                foreach (var item in weBoUserClient.SentsMessageList)
+                //打印已发送完消息的新粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByNew)
                 {
-                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的老粉粉丝" + item.nick);
                 }
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                weBoUserClient.SentsMessageListByNew = new List<Fans>();
             }
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (weBoUserClient != null && weBoUserClient.SentsMessageList.Count > 0)
+            if (weBoUserClient != null && weBoUserClient.SentsMessageListByOld.Count > 0 && weBoUserClient.SentsMessageListByNew.Count > 0)
             {
-                //打印已发送完消息的粉丝列表
-                foreach (var item in weBoUserClient.SentsMessageList)
+                //打印已发送完消息的老粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByOld)
                 {
                     weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
                 }
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                weBoUserClient.SentsMessageListByOld = new List<Fans>();
+                //打印已发送完消息的新粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByNew)
+                {
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                }
+                weBoUserClient.SentsMessageListByNew = new List<Fans>();
             }
             System.Environment.Exit(0);
         }

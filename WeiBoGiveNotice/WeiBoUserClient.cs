@@ -247,7 +247,9 @@ namespace WeiBoGiveNotice
         public int moreOffInterTime_begin { get; set; }
         public int moreOffInterTime_end { get; set; }
         //已发送列表
-        public List<Fans> SentsMessageList { get; set; }
+        public List<Fans> SentsMessageListByOld { get; set; }
+
+        public List<Fans> SentsMessageListByNew { get; set; }
         #endregion
 
         #region 私有属性
@@ -601,14 +603,14 @@ namespace WeiBoGiveNotice
                                     break;
                                 }
                                 //SendMessage(fansList[i], message);
-                                if (SentsMessageList.Where(x => x.uid == fansList[i].uid).Count() == 0)
+                                if (SentsMessageListByNew.Where(x => x.uid == fansList[i].uid).Count() == 0)
                                 {
                                     foreach (var item in message)
                                     {
                                         Thread.Sleep(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));//发多个消息的间隔时间
                                         SendMessage(fansList[i], item.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", ""));
                                     }
-                                    SentsMessageList.Add(fansList[i]);
+                                    SentsMessageListByNew.Add(fansList[i]);
                                     sentFansNum++;
                                     PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息: " + fansList[i].nick + " 睡眠毫秒数为:" + RandomNumber(OldFansCall_Begin, OldFansCall_End));
                                     if (valueChange != null)
@@ -690,11 +692,11 @@ namespace WeiBoGiveNotice
                     }
                     foreach (var item in fansList)
                     {
-                        if (SentsMessageList.Where(x => x.uid == item.uid).Count() == 0)
+                        if (SentsMessageListByOld.Where(x => x.uid == item.uid).Count() == 0)
                         {
                             SendMessage(item, message);
                             //将已发送的粉丝存储答已发送列表中；避免重复发送
-                            SentsMessageList.Add(item);
+                            SentsMessageListByOld.Add(item);
                             sentCount++;
                             if (valueChange != null)
                             {
