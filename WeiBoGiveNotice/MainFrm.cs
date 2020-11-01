@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,7 +21,7 @@ namespace WeiBoGiveNotice
             InitializeComponent();
 
         }
-
+        private ILog log = LogManager.GetLogger("weiBoLog");
 
         private WeiBoUserClient weBoUserClient;
 
@@ -90,7 +91,8 @@ namespace WeiBoGiveNotice
             }
             catch (Exception ex)
             {
-                throw ex;
+                log.Error("启动异常!", ex);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -167,7 +169,7 @@ namespace WeiBoGiveNotice
                     MessageBox.Show("向前打招呼数量必须小于9999");
                     return;
                 }
-                List<string> officicals = officical.Text.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None).ToList();
+                List<string> officicals = officical.Text.Split(new string[] { "\r\n\r\n\r\n" }, StringSplitOptions.None).ToList();
                 officicals = officicals.Where(s => !string.IsNullOrEmpty(s)).ToList();
                 weBoUserClient.ListenNewFans(officicals, CallNewFansNums, delegate (int value)
                 {

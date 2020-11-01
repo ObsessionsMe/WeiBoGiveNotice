@@ -509,7 +509,7 @@ namespace WeiBoGiveNotice
                 SearchFansPageHttpResult = HttpHelper.GetHtml(GetHttpItem);
                 Thread.Sleep(RandomNumber(2, 5));
             }
-            var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=1005050005_\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
+            var fansList = Regex.Matches(SearchFansPageHttpResult.Html, "<img usercard=\\\\\"id=(.*?)&refer_flag=.*?\\\\\" width=\\\\\"50\\\\\" height=\\\\\"50\\\\\" alt=\\\\\"(.*?)\\\\\" src=\\\\\"(.*?)\\\\\">");
             //解析粉丝列表
             Fans fans = null;
             if (fansList.Count > 0)
