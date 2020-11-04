@@ -27,7 +27,7 @@ namespace WeiBoGiveNotice
 
         private void SetControlText(Control control, string value)
         {
-            control.Invoke(new MethodInvoker(delegate () { control.Text = value; }));
+            control.Invoke(new MethodInvoker(delegate (){ control.Text = value; }));
         }
 
         //初始化
@@ -57,9 +57,12 @@ namespace WeiBoGiveNotice
                 };
                 weBoUserClient.UserInfoChange = delegate (WeiBoUser user)
                 {
-                    userPhoto.Invoke(new MethodInvoker(delegate () { userPhoto.Load(user.avatar_large); }));
+                    userPhoto.Invoke(new MethodInvoker(delegate () { userPhoto.Load(user.avatar_large); }) );
                     SetControlText(userName, user.nick);
+                    BeginOn.Invoke(new MethodInvoker(delegate () { BeginOn.Enabled = true; }));
+                    BeginDown.Invoke(new MethodInvoker(delegate () { BeginDown.Enabled = true; }));
                 };
+
                 weBoUserClient.NumberRunsChange = delegate (int value)
                 {
                     SetControlText(runNumber, value.ToString());
@@ -76,9 +79,21 @@ namespace WeiBoGiveNotice
                 {
                     SetControlText(beginSite, fans.nick);
                 };
-                weBoUserClient.TodaySendMessageCountChange = delegate (int value) { SetControlText(runNumberToday, value.ToString()); };
-                weBoUserClient.IsSendMessageNewFansRunChange = delegate (bool value) { SetControlText(BeginDown, value ? "停止" : "开始"); };
-                weBoUserClient.IsSendMeesageToOldFansRunChange = delegate (bool value) { SetControlText(button1, value ? "停止" : "开始"); };
+                weBoUserClient.TodaySendMessageCountChange = delegate (int value) { SetControlText(runNumberToday, value.ToString());
+                
+                };
+                weBoUserClient.IsSendMessageNewFansRunChange = delegate (bool value)
+                {
+                    SetControlText(BeginDown, value ? "停止" : "开始");
+                    BeginOn.Invoke(new MethodInvoker(delegate () { BeginOn.Enabled = !value; }));
+                    BeginDown.Invoke(new MethodInvoker(delegate () { BeginDown.Enabled = !value; }));
+                };
+                weBoUserClient.IsSendMeesageToOldFansRunChange = delegate (bool value)
+                {
+                    SetControlText(BeginOn, value ? "停止" : "开始");
+                    BeginOn.Invoke(new MethodInvoker(delegate () { BeginOn.Enabled = !value; }));
+                    BeginDown.Invoke(new MethodInvoker(delegate () { BeginDown.Enabled = !value; }));
+                };
 
                 #endregion
 
@@ -87,7 +102,11 @@ namespace WeiBoGiveNotice
                 //默认给页面的配置赋值，数据从配置中读取
                 weBoUserClient.SetDefalutConfig();
 
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                BeginOn.Enabled = false;
+                BeginDown.Enabled = false;
+
+                weBoUserClient.SentsMessageListByNew = new List<Fans>();
+                weBoUserClient.SentsMessageListByOld = new List<Fans>();
             }
             catch (Exception ex)
             {
@@ -95,7 +114,6 @@ namespace WeiBoGiveNotice
                 MessageBox.Show(ex.Message);
             }
         }
-
 
         //点击开始(向前打招呼)--给老粉丝发消息
         private void button1_Click(object sender, EventArgs e)
@@ -126,12 +144,12 @@ namespace WeiBoGiveNotice
             else
             {
                 weBoUserClient.IsSendMeesageToOldFansRun = false;
-                //打印已发送完消息的粉丝列表
-                foreach (var item in weBoUserClient.SentsMessageList)
+                //打印已发送完消息的老粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByOld)
                 {
-                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的老粉粉丝" + item.nick);
                 }
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                weBoUserClient.SentsMessageListByOld = new List<Fans>();
             }
         }
 
@@ -179,25 +197,31 @@ namespace WeiBoGiveNotice
             else
             {
                 weBoUserClient.IsSendMessageNewFansRun = false;
-                //打印已发送完消息的粉丝列表
-                foreach (var item in weBoUserClient.SentsMessageList)
+                //打印已发送完消息的新粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByNew)
                 {
-                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的老粉粉丝" + item.nick);
                 }
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                weBoUserClient.SentsMessageListByNew = new List<Fans>();
             }
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (weBoUserClient != null && weBoUserClient.SentsMessageList.Count > 0)
+            if (weBoUserClient != null && weBoUserClient.SentsMessageListByOld.Count > 0 && weBoUserClient.SentsMessageListByNew.Count > 0)
             {
-                //打印已发送完消息的粉丝列表
-                foreach (var item in weBoUserClient.SentsMessageList)
+                //打印已发送完消息的老粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByOld)
                 {
                     weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
                 }
-                weBoUserClient.SentsMessageList = new List<Fans>();
+                weBoUserClient.SentsMessageListByOld = new List<Fans>();
+                //打印已发送完消息的新粉丝列表
+                foreach (var item in weBoUserClient.SentsMessageListByNew)
+                {
+                    weBoUserClient.PrintMsg(PrintType.info, "已发送完消息的粉丝" + item.nick);
+                }
+                weBoUserClient.SentsMessageListByNew = new List<Fans>();
             }
             System.Environment.Exit(0);
         }

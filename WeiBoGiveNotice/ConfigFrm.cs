@@ -22,35 +22,35 @@ namespace WeiBoGiveNotice
         private void ConfigFrom_Load(object sender, EventArgs e)
         {
             //赋值
-            NewFansRefresh_Begin.Text = ConfigurationManager.AppSettings["NewFansRefresh_Begin"];
-            NewFansRefresh_End.Text = ConfigurationManager.AppSettings["NewFansRefresh_End"];
-            NewFansCall_Begin .Text = ConfigurationManager.AppSettings["NewFansCall_Begin"];
-            NewFansCall_End.Text = ConfigurationManager.AppSettings["NewFansCall_End"];
-            OldRefresh_Begin.Text = ConfigurationManager.AppSettings["OldRefresh_Begin"];
-            OldRefresh_End.Text = ConfigurationManager.AppSettings["OldRefresh_End"];
-            OldFansCall_Begin.Text = ConfigurationManager.AppSettings["OldFansCall_Begin"];
-            OldFansCall_End.Text = ConfigurationManager.AppSettings["OldFansCall_End"];
-            moreOffInterTime_begin.Text = ConfigurationManager.AppSettings["moreOffInterTime_begin"];
-            moreOffInterTime_end.Text = ConfigurationManager.AppSettings["moreOffInterTime_end"];
+            NewFansRefresh_Begin.Text = CfgMgr.GetValue("NewFansRefresh_Begin");
+            NewFansRefresh_End.Text = CfgMgr.GetValue("NewFansRefresh_End");
+            NewFansCall_Begin.Text = CfgMgr.GetValue("NewFansCall_Begin");
+            NewFansCall_End.Text = CfgMgr.GetValue("NewFansCall_End");
+            OldRefresh_Begin.Text = CfgMgr.GetValue("OldRefresh_Begin");
+            OldRefresh_End.Text = CfgMgr.GetValue("OldRefresh_End");
+            OldFansCall_Begin.Text = CfgMgr.GetValue("OldFansCall_Begin");
+            OldFansCall_End.Text = CfgMgr.GetValue("OldFansCall_End");
+            moreOffInterTime_begin.Text = CfgMgr.GetValue("moreOffInterTime_begin");
+            moreOffInterTime_end.Text = CfgMgr.GetValue("moreOffInterTime_end");
         }
 
         //保存时间相关的配置信息
         private void saveConfig_Click(object sender, EventArgs e)
         {
-            string file = Application.ExecutablePath;
-            Configuration config = ConfigurationManager.OpenExeConfiguration(file);
-            config.AppSettings.Settings["NewFansRefresh_Begin"].Value = NewFansRefresh_Begin.Text;
-            config.AppSettings.Settings["NewFansRefresh_End"].Value = NewFansRefresh_End.Text;
-            config.AppSettings.Settings["NewFansCall_Begin"].Value = NewFansCall_Begin.Text;
-            config.AppSettings.Settings["NewFansCall_End"].Value = NewFansCall_End.Text;
-            config.AppSettings.Settings["OldRefresh_Begin"].Value = OldRefresh_Begin.Text;
-            config.AppSettings.Settings["OldRefresh_End"].Value = OldRefresh_End.Text;
-            config.AppSettings.Settings["OldFansCall_Begin"].Value = OldFansCall_Begin.Text;
-            config.AppSettings.Settings["OldFansCall_End"].Value = OldFansCall_End.Text;
-            config.AppSettings.Settings["moreOffInterTime_begin"].Value = moreOffInterTime_begin.Text;
-            config.AppSettings.Settings["moreOffInterTime_end"].Value = moreOffInterTime_end.Text;
-            config.Save(ConfigurationSaveMode.Modified);
-            ConfigurationManager.RefreshSection("appSettings");
+            //string file = Application.ExecutablePath;
+            //Configuration config = ConfigurationManager.OpenExeConfiguration(file);
+            CfgMgr.SaveValue("NewFansRefresh_Begin", NewFansRefresh_Begin.Text);
+            CfgMgr.SaveValue("NewFansRefresh_End", NewFansRefresh_End.Text);
+            CfgMgr.SaveValue("NewFansCall_Begin", NewFansCall_Begin.Text);
+            CfgMgr.SaveValue("NewFansCall_End", NewFansCall_End.Text);
+            CfgMgr.SaveValue("OldRefresh_Begin", OldRefresh_Begin.Text);
+            CfgMgr.SaveValue("OldRefresh_End", OldRefresh_End.Text);
+            CfgMgr.SaveValue("OldFansCall_Begin", OldFansCall_Begin.Text);
+            CfgMgr.SaveValue("OldFansCall_End", OldFansCall_End.Text);
+            CfgMgr.SaveValue("moreOffInterTime_begin", moreOffInterTime_begin.Text);
+            CfgMgr.SaveValue("moreOffInterTime_end", moreOffInterTime_end.Text);
+            //config.Save(ConfigurationSaveMode.Modified);
+            //ConfigurationManager.RefreshSection("appSettings");
             weBoUserClient.NewFansRefresh_Begin = int.Parse(NewFansRefresh_Begin.Text);
             weBoUserClient.NewFansRefresh_End = int.Parse(NewFansRefresh_End.Text);
             weBoUserClient.NewFansCall_Begin = int.Parse(NewFansCall_Begin.Text);
