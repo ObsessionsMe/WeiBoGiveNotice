@@ -619,6 +619,7 @@ namespace WeiBoGiveNotice
                                         //达到打招呼上线后，退出循环
                                         IsSendMessageNewFansRun = false;
                                     }
+                                    Thread.Sleep(RandomNumber(NewFansCall_Begin, NewFansCall_End));//发多人的间隔时间
                                 }
                             }
                             //2如果找到上次最后一个粉丝就停止循环
@@ -661,7 +662,6 @@ namespace WeiBoGiveNotice
                     });
                 }
             }
-            Thread.Sleep(RandomNumber(NewFansCall_Begin, NewFansCall_End));//发多人的间隔时间
         }
 
         //判断是否粉是否取关了
@@ -750,7 +750,6 @@ namespace WeiBoGiveNotice
                                 }
                             }
                             PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给老粉丝发消息: " + item.nick + " 睡眠毫秒数为:" + RandomNumber(OldFansCall_Begin, OldFansCall_End));
-                            Thread.Sleep(RandomNumber(OldFansCall_Begin, OldFansCall_End));
                             if (sentCount >= maxUserCount)
                             {
                                 IsSendMeesageToOldFansRun = false;
@@ -760,6 +759,7 @@ namespace WeiBoGiveNotice
                             {
                                 break;
                             }
+                            Thread.Sleep(RandomNumber(OldFansCall_Begin, OldFansCall_End));
                         }
                     }
                     Thread.Sleep(RandomNumber(OldRefresh_Begin, OldRefresh_End));
