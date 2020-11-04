@@ -27,7 +27,7 @@ namespace WeiBoGiveNotice
 
         private void SetControlText(Control control, string value)
         {
-            control.Invoke(new MethodInvoker(delegate () { control.Text = value; }));
+            control.Invoke(new MethodInvoker(delegate (){ control.Text = value; }));
         }
 
         //初始化
@@ -57,9 +57,12 @@ namespace WeiBoGiveNotice
                 };
                 weBoUserClient.UserInfoChange = delegate (WeiBoUser user)
                 {
-                    userPhoto.Invoke(new MethodInvoker(delegate () { userPhoto.Load(user.avatar_large); }));
+                    userPhoto.Invoke(new MethodInvoker(delegate () { userPhoto.Load(user.avatar_large); }) );
                     SetControlText(userName, user.nick);
+                    BeginOn.Invoke(new MethodInvoker(delegate () { BeginOn.Enabled = true; }));
+                    BeginDown.Invoke(new MethodInvoker(delegate () { BeginDown.Enabled = true; }));
                 };
+
                 weBoUserClient.NumberRunsChange = delegate (int value)
                 {
                     SetControlText(runNumber, value.ToString());
@@ -76,9 +79,21 @@ namespace WeiBoGiveNotice
                 {
                     SetControlText(beginSite, fans.nick);
                 };
-                weBoUserClient.TodaySendMessageCountChange = delegate (int value) { SetControlText(runNumberToday, value.ToString()); };
-                weBoUserClient.IsSendMessageNewFansRunChange = delegate (bool value) { SetControlText(BeginDown, value ? "停止" : "开始"); };
-                weBoUserClient.IsSendMeesageToOldFansRunChange = delegate (bool value) { SetControlText(button1, value ? "停止" : "开始"); };
+                weBoUserClient.TodaySendMessageCountChange = delegate (int value) { SetControlText(runNumberToday, value.ToString());
+                
+                };
+                weBoUserClient.IsSendMessageNewFansRunChange = delegate (bool value)
+                {
+                    SetControlText(BeginDown, value ? "停止" : "开始");
+                    BeginOn.Invoke(new MethodInvoker(delegate () { BeginOn.Enabled = !value; }));
+                    BeginDown.Invoke(new MethodInvoker(delegate () { BeginDown.Enabled = !value; }));
+                };
+                weBoUserClient.IsSendMeesageToOldFansRunChange = delegate (bool value)
+                {
+                    SetControlText(BeginOn, value ? "停止" : "开始");
+                    BeginOn.Invoke(new MethodInvoker(delegate () { BeginOn.Enabled = !value; }));
+                    BeginDown.Invoke(new MethodInvoker(delegate () { BeginDown.Enabled = !value; }));
+                };
 
                 #endregion
 
@@ -86,6 +101,9 @@ namespace WeiBoGiveNotice
 
                 //默认给页面的配置赋值，数据从配置中读取
                 weBoUserClient.SetDefalutConfig();
+
+                BeginOn.Enabled = false;
+                BeginDown.Enabled = false;
 
                 weBoUserClient.SentsMessageListByNew = new List<Fans>();
                 weBoUserClient.SentsMessageListByOld = new List<Fans>();
@@ -96,7 +114,6 @@ namespace WeiBoGiveNotice
                 MessageBox.Show(ex.Message);
             }
         }
-
 
         //点击开始(向前打招呼)--给老粉丝发消息
         private void button1_Click(object sender, EventArgs e)

@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeiBoGiveNotice", "WeiBoGiv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WBGNKeygen", "WBGNKeygen\WBGNKeygen.csproj", "{9BC275D2-17DA-4853-925E-BCD44F8C22FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{97C8D5E3-B8BE-489E-B4F2-A714D561D598}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{9BC275D2-17DA-4853-925E-BCD44F8C22FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BC275D2-17DA-4853-925E-BCD44F8C22FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BC275D2-17DA-4853-925E-BCD44F8C22FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97C8D5E3-B8BE-489E-B4F2-A714D561D598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97C8D5E3-B8BE-489E-B4F2-A714D561D598}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97C8D5E3-B8BE-489E-B4F2-A714D561D598}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97C8D5E3-B8BE-489E-B4F2-A714D561D598}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

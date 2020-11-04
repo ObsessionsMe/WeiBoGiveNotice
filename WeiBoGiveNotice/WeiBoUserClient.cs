@@ -184,7 +184,7 @@ namespace WeiBoGiveNotice
         }
 
 
-        private bool _IsSendMessageNewFansRun = false;
+        public bool _IsSendMessageNewFansRun = false;
         /// <summary>
         /// 是否在发消息给新粉丝
         /// </summary>
@@ -464,6 +464,7 @@ namespace WeiBoGiveNotice
             LatestFans = SearchFnas(1);
 
             PrintMsg(PrintType.info, $"InitWeiBoUser 初始化成功");
+            PrintMsg(PrintType.info, $"InitWeiBoUser 初始化成功后:LatestFans数据: {JsonConvert.SerializeObject(LatestFans)}_fansList:{JsonConvert.SerializeObject(LatestFans)}");
         }
 
         private void InitLv2Fans()
@@ -624,7 +625,7 @@ namespace WeiBoGiveNotice
                             isExistlastFans = fansList.Where(x => x.uid == LatestFans[0].uid).Count() > 0 ? false : true;
                         }
                         sentFans.AddRange(fansList);
-                        //Thread.Sleep(RandomNumber(NewFansRefresh_Begin, NewFansRefresh_End));
+                        Thread.Sleep(RandomNumber(NewFansRefresh_Begin, NewFansRefresh_End));
                     }
                     LatestFans = sentFans;
                 }
