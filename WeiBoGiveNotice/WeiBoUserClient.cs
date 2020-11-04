@@ -578,15 +578,14 @@ namespace WeiBoGiveNotice
                         fansList = SearchFnas(pageNum);
                         if (fansList.Count == 0)
                         {
-                            IsSendMessageNewFansRun = false;
-                            return;
+                            break;
                         }
                         //找第一页的粉丝
                         while (!isExistFans(LatestFans[0].nick) && pageNum == 1)
                         {
                             LatestFans.RemoveAt(0);
                             PrintMsg(PrintType.info, "方法:SendMeesageToNewFans:移除的粉丝" + LatestFans[0].nick);
-                            if (fansList.Count == 0)
+                            if (LatestFans.Count == 0)
                             {
                                 LatestFans = fansList;
                                 bo = false;
@@ -605,14 +604,11 @@ namespace WeiBoGiveNotice
                                 //SendMessage(fansList[i], message);
                                 if (SentsMessageListByNew.Where(x => x.uid == fansList[i].uid).Count() == 0)
                                 {
-                                    foreach (var item in message)
-                                    {
-                                        Thread.Sleep(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));//发多个消息的间隔时间
-                                        SendMessage(fansList[i], item.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", ""));
-                                    }
+                                    SendMoreMessageByNew(fansList[i], message);
                                     SentsMessageListByNew.Add(fansList[i]);
                                     sentFansNum++;
-                                    PrintMsg(PrintType.info, "方法:SendMeesageToOldFun: 正在给新粉丝发消息: " + fansList[i].nick + " 睡眠毫秒数为:" + RandomNumber(OldFansCall_Begin, OldFansCall_End));
+                                    PrintMsg(PrintType.info, "方法:SendMeesageToNewFans: 正在给新粉丝发消息: " + fansList[i].nick + " 睡眠毫秒数为:" + RandomNumber(OldFansCall_Begin, OldFansCall_End));
+                                    PrintMsg(PrintType.info, $"问题追踪_LatestFans:{JsonConvert.SerializeObject(LatestFans)}_fansList:{JsonConvert.SerializeObject(fansList)}");
                                     if (valueChange != null)
                                     {
                                         valueChange(maxUserCount - sentFansNum);
@@ -625,10 +621,10 @@ namespace WeiBoGiveNotice
                                 }
                             }
                             //2如果找到上次最后一个粉丝就停止循环
-                            isExistlastFans = fansList.SingleOrDefault(x => x.uid == LatestFans[0].uid) != null ? false : true;
+                            isExistlastFans = fansList.Where(x => x.uid == LatestFans[0].uid).Count() > 0 ? false : true;
                         }
                         sentFans.AddRange(fansList);
-                        Thread.Sleep(RandomNumber(NewFansRefresh_Begin, NewFansRefresh_End));
+                        //Thread.Sleep(RandomNumber(NewFansRefresh_Begin, NewFansRefresh_End));
                     }
                     LatestFans = sentFans;
                 }
@@ -640,20 +636,62 @@ namespace WeiBoGiveNotice
             }
         }
 
+        /// <summary>
+        ///  给用户发多个消息线程; 处理逻辑: 给所有粉丝发一个消息瞬时发送，发第二个消息间隔1小时左右
+        /// </summary>
+        public void SendMoreMessageByNew(Fans fans, List<string> message)
+        {
+            for (int i = 0; i < message.Count; i++)
+            {
+                string msg = message[i].Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "");
+                if (i == 0)
+                {
+                    SendMessage(fans, msg);
+                }
+                else
+                {
+                    //发送第二个，第三个消息..
+                    Task.Factory.StartNew(() =>
+                    {
+                        //一人发个多消息的间隔时间
+                        Thread.Sleep(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));
+                        //Task.Delay(RandomNumber(moreOffInterTime_begin, moreOffInterTime_end));
+                        SendMessage(fans, msg);
+                    });
+                }
+            }
+            Thread.Sleep(RandomNumber(NewFansCall_Begin, NewFansCall_End));//发多人的间隔时间
+        }
+
         //判断是否粉是否取关了
         public bool isExistFans(string nick)
         {
+            var res = false;
             var GetHttpItem = CreateHttpItem();
             GetHttpItem.URL = string.Format(isExistFansPage, nick, WeiBoUser.uid);
             Match mc = Match.Empty;
-            while (string.IsNullOrEmpty(mc.Value))
+            HttpResult httpResult = null;
+            var ResetQueryNumber = 3;
+
+
+            while (!res && ResetQueryNumber > 0)
             {
-                var httpResult = HttpHelper.GetHtml(GetHttpItem);
-                var reg = new Regex("共搜索到(\\d+)个关于");
-                mc = reg.Match(httpResult.Html);
-                Thread.Sleep(RandomNumber(3, 7));
+                while (string.IsNullOrEmpty(mc.Value))
+                {
+                    httpResult = HttpHelper.GetHtml(GetHttpItem);
+                    var reg = new Regex("共搜索到(\\d+)个关于");
+                    mc = reg.Match(httpResult.Html);
+                    Thread.Sleep(RandomNumber(3, 7));
+                }
+                res = int.Parse(mc.Groups[1].Value) > 0 ? true : false;
+                if (!res)
+                {
+                    ResetQueryNumber--;
+                    mc = Match.Empty;
+                }
             }
-            return int.Parse(mc.Groups[1].Value) > 0 ? true : false;
+
+            return res;
         }
 
         /// <summary>
