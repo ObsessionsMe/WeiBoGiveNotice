@@ -797,7 +797,7 @@ namespace WeiBoGiveNotice
         {
             var PostHttpItem = CreateHttpItem();
             PostHttpItem.Method = "post";
-            PostHttpItem.RequestRetryNumber = 0;
+            PostHttpItem.RequestRetryNumber = 1;
             PostHttpItem.URL = SendMessageApi;
             PostHttpItem.ContentType = "application/x-www-form-urlencoded";
             PostHttpItem.Header.Add("Origin", "https://api.weibo.com");
