@@ -394,7 +394,7 @@ namespace WeiBoGiveNotice
 
         private HttpItem CreateHttpItem()
         {
-            return new HttpItem() { RequestRetryNumber = 5, Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value)) };
+            return new HttpItem() { RequestRetryNumber = 5, Cookie = string.Join(";", Cookies.Select(s => s.Key + "=" + s.Value)),Referer= "https://weibo.com/" };
         }
 
         /// <summary>
